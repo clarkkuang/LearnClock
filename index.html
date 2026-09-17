@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>龙之钟塔 · 学看钟</title>
+<style>
+:root{
+  --night:#150a2b;
+  --night-2:#1e1040;
+  --panel:rgba(38,20,74,.72);
+  --panel-line:rgba(255,206,92,.28);
+  --gold:#ffce5c;
+  --gold-deep:#f0a02a;
+  --ember:#ff7a3d;
+  --jade:#3fd6a0;
+  --sky:#6ad0ff;
+  --rose:#ff7aa8;
+  --text:#fdf3e0;
+  --text-dim:#c3b3dd;
+  --ok:#49e08b;
+  --bad:#ff6b8a;
+  --r:22px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  min-height:100vh;
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 12% -5%, #3a1d6e 0%, transparent 60%),
+    radial-gradient(900px 600px at 105% 10%, #5c2358 0%, transparent 55%),
+    radial-gradient(800px 800px at 50% 115%, #12324a 0%, transparent 60%),
+    linear-gradient(180deg,var(--night) 0%, var(--night-2) 100%);
+  background-attachment:fixed;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,.8), transparent),
+    radial-gradient(2px 2px at 80% 12%, rgba(255,235,180,.75), transparent),
+    radial-gradient(1.6px 1.6px at 62% 34%, rgba(255,255,255,.6), transparent),
+    radial-gradient(2px 2px at 26% 68%, rgba(190,220,255,.7), transparent),
+    radial-gradient(1.6px 1.6px at 90% 62%, rgba(255,255,255,.55), transparent),
+    radial-gradient(1.6px 1.6px at 44% 88%, rgba(255,220,255,.6), transparent),
+    radial-gradient(2px 2px at 70% 82%, rgba(255,255,255,.5), transparent);
+  opacity:.75;
+}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:14px 14px 60px}
+
+/* ---------- header ---------- */
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .dragon{font-size:36px;filter:drop-shadow(0 4px 10px rgba(255,122,61,.55));animation:float 3.4s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-7px) rotate(3deg)}}
+h1{font-size:clamp(20px,3.4vw,30px);margin:0;letter-spacing:2px;
+  background:linear-gradient(180deg,#fff7db,#ffce5c 55%,#f0902a);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 2px 0 rgba(0,0,0,.18)}
+h1 small{display:block;font-size:12px;letter-spacing:1px;color:var(--text-dim);
+  background:none;-webkit-text-fill-color:var(--text-dim);font-weight:400;margin-top:2px}
+.header-right{margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.score{display:flex;align-items:center;gap:6px;background:var(--panel);border:1.5px solid var(--panel-line);
+  border-radius:999px;padding:7px 14px;font-weight:700;font-size:15px;backdrop-filter:blur(6px)}
+.icon-btn{width:42px;height:42px;border-radius:14px;border:1.5px solid var(--panel-line);background:var(--panel);
+  color:var(--text);font-size:19px;cursor:pointer;display:grid;place-items:center;transition:.15s}
+.icon-btn:hover{transform:translateY(-2px);border-color:var(--gold)}
+.icon-btn.off{opacity:.45}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:8px;margin:6px 0 14px;flex-wrap:wrap}
+.tab{flex:1 1 150px;min-width:132px;padding:11px 10px;border-radius:16px;cursor:pointer;
+  border:1.5px solid var(--panel-line);background:var(--panel);color:var(--text-dim);
+  font-size:15px;font-weight:700;text-align:center;transition:.18s;backdrop-filter:blur(6px)}
+.tab:hover{transform:translateY(-2px);color:var(--text)}
+.tab.active{color:#2a1400;border-color:transparent;
+  background:linear-gradient(180deg,#ffe49a,#ffc043);
+  box-shadow:0 8px 22px rgba(255,180,60,.3)}
+
+/* ---------- layout ---------- */
+.stage{display:grid;grid-template-columns:minmax(300px,1fr) minmax(320px,430px);gap:18px;align-items:start}
+@media (max-width:900px){.stage{grid-template-columns:1fr}}
+.card{background:var(--panel);border:1.5px solid var(--panel-line);border-radius:var(--r);
+  padding:14px;backdrop-filter:blur(8px);box-shadow:0 14px 40px rgba(0,0,0,.28)}
+.card + .card{margin-top:14px}
+.card h2{margin:0 0 10px;font-size:16px;letter-spacing:1px;color:var(--gold);display:flex;align-items:center;gap:7px}
+
+/* ---------- clock ---------- */
+.clock-box{display:flex;flex-direction:column;align-items:center;gap:10px}
+#clock{width:100%;max-width:560px;height:auto;touch-action:none;cursor:grab;user-select:none;display:block}
+#clock.grabbing{cursor:grabbing}
+.hand-hit{cursor:grab}
+
+/* digital */
+.digital{width:100%;max-width:460px;display:flex;align-items:center;justify-content:center;gap:12px;
+  padding:12px 16px;border-radius:18px;
+  background:linear-gradient(180deg,rgba(7,20,28,.92),rgba(4,12,20,.95));
+  border:2px solid rgba(106,208,255,.34);box-shadow:inset 0 0 28px rgba(0,190,255,.16),0 8px 26px rgba(0,0,0,.35)}
+.ampm{font-size:16px;font-weight:800;color:var(--sky);text-shadow:0 0 12px rgba(106,208,255,.7);min-width:34px;text-align:center;line-height:1.25}
+.dtime{font-family:"DS-Digital",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:clamp(40px,8.6vw,62px);font-weight:700;letter-spacing:3px;color:#8ef0ff;
+  text-shadow:0 0 10px rgba(80,230,255,.85),0 0 30px rgba(0,180,255,.5)}
+.d24{font-size:13px;color:#77b7cf;letter-spacing:1px;text-align:center;line-height:1.5}
+.say{font-size:clamp(16px,3.2vw,21px);font-weight:800;color:var(--gold);letter-spacing:1.5px;text-align:center}
+.say .hint{display:block;font-size:12px;font-weight:500;color:var(--text-dim);letter-spacing:.5px;margin-top:3px}
+
+/* ---------- controls ---------- */
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row + .row{margin-top:9px}
+.btn{border:none;cursor:pointer;border-radius:14px;padding:11px 15px;font-size:15px;font-weight:800;
+  font-family:inherit;color:#2a1400;background:linear-gradient(180deg,#ffe49a,#ffc043);
+  box-shadow:0 5px 0 #c9821c, 0 10px 18px rgba(0,0,0,.26);transition:.1s;letter-spacing:.5px}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #c9821c,0 4px 10px rgba(0,0,0,.25)}
+.btn.ghost{background:rgba(255,255,255,.08);color:var(--text);box-shadow:0 4px 0 rgba(0,0,0,.28);
+  border:1.5px solid var(--panel-line)}
+.btn.jade{background:linear-gradient(180deg,#8bf5cd,#33cf96);box-shadow:0 5px 0 #1d8b64,0 10px 18px rgba(0,0,0,.26)}
+.btn.ember{background:linear-gradient(180deg,#ffb27a,#ff7a3d);box-shadow:0 5px 0 #c04a17,0 10px 18px rgba(0,0,0,.26);color:#2d0c00}
+.btn.sm{padding:8px 12px;font-size:14px;border-radius:12px}
+.btn.big{padding:14px 22px;font-size:17px}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.seg{display:inline-flex;background:rgba(0,0,0,.28);border:1.5px solid var(--panel-line);border-radius:14px;padding:3px;gap:3px}
+.seg button{border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-weight:700;font-size:14px;
+  padding:8px 13px;border-radius:11px;cursor:pointer;transition:.15s;white-space:nowrap}
+.seg button.on{background:linear-gradient(180deg,#ffe49a,#ffc043);color:#2a1400}
+.label{font-size:13px;color:var(--text-dim);font-weight:700;letter-spacing:.5px}
+
+/* stepper */
+.stepper{display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.26);border:1.5px solid var(--panel-line);
+  border-radius:14px;padding:5px 7px}
+.stepper button{width:34px;height:34px;border-radius:10px;border:none;cursor:pointer;font-size:20px;font-weight:800;
+  font-family:inherit;color:#2a1400;background:linear-gradient(180deg,#ffe49a,#ffc043);line-height:1}
+.stepper .val{min-width:46px;text-align:center;font-size:20px;font-weight:800;color:var(--text)}
+.stepper .unit{font-size:13px;color:var(--text-dim);font-weight:700}
+
+/* elapsed readout */
+.elapsed{border-radius:16px;padding:12px;background:rgba(0,0,0,.24);border:1.5px dashed rgba(63,214,160,.4)}
+.elapsed .line{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:15px}
+.elapsed b{color:var(--jade);font-size:19px}
+.elapsed .eq{color:var(--gold);font-weight:800}
+.chip{display:inline-block;padding:4px 10px;border-radius:999px;background:rgba(255,206,92,.16);
+  border:1px solid rgba(255,206,92,.4);font-weight:800;font-size:14px;color:var(--gold)}
+
+/* ---------- quiz ---------- */
+.question{font-size:clamp(17px,3.4vw,22px);font-weight:800;line-height:1.6;text-align:center;margin:4px 0 10px}
+.question .q-num{color:var(--gold);font-size:1.22em}
+.mini-row{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+.mini{display:flex;flex-direction:column;align-items:center;gap:4px}
+.mini svg{width:118px;height:118px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+.mini span{font-size:13px;color:var(--text-dim);font-weight:700}
+.arrow{font-size:26px;color:var(--gold)}
+.feedback{min-height:28px;text-align:center;font-size:16px;font-weight:800;margin-top:8px;line-height:1.5}
+.feedback.ok{color:var(--ok)}
+.feedback.bad{color:var(--bad)}
+.feedback small{display:block;font-weight:600;font-size:13px;color:var(--text-dim);margin-top:3px}
+.answer-box{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:19px;font-weight:800}
+.slot{min-width:74px;height:56px;border-radius:14px;border:2.5px solid rgba(255,206,92,.5);
+  background:rgba(0,0,0,.3);display:grid;place-items:center;font-size:26px;font-weight:800;color:var(--gold);cursor:pointer;transition:.15s}
+.slot.active{border-color:var(--gold);background:rgba(255,206,92,.16);box-shadow:0 0 0 4px rgba(255,206,92,.16)}
+.slot.empty{color:rgba(255,255,255,.22)}
+.pad{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px}
+.pad button{padding:13px 0;border-radius:13px;border:1.5px solid var(--panel-line);background:rgba(255,255,255,.08);
+  color:var(--text);font-size:19px;font-weight:800;font-family:inherit;cursor:pointer;transition:.12s}
+.pad button:active{transform:translateY(2px);background:rgba(255,206,92,.24)}
+.progress{height:12px;border-radius:999px;background:rgba(0,0,0,.32);overflow:hidden;border:1px solid var(--panel-line)}
+.progress i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffce5c,#ff7a3d);transition:width .4s}
+.streak{font-size:13px;color:var(--text-dim);font-weight:700;text-align:center;margin-top:6px}
+
+/* dragons */
+.eggbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.egg{font-size:24px;filter:grayscale(1) opacity(.35)}
+.egg.on{filter:none;animation:pop .45s ease}
+@keyframes pop{0%{transform:scale(.4)}60%{transform:scale(1.3)}100%{transform:scale(1)}}
+.collection{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.dcard{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 10px;border-radius:14px;
+  background:rgba(255,255,255,.07);border:1.5px solid var(--panel-line);min-width:74px}
+.dcard .e{font-size:28px}
+.dcard .n{font-size:12px;font-weight:800;color:var(--gold)}
+.muted{color:var(--text-dim);font-size:13px;line-height:1.7}
+.help li{margin-bottom:6px}
+.help b{color:var(--gold)}
+
+/* hatch overlay */
+.overlay{position:fixed;inset:0;z-index:50;display:none;place-items:center;background:rgba(10,4,24,.82);backdrop-filter:blur(4px)}
+.overlay.show{display:grid;animation:fade .3s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.hatch{text-align:center;padding:30px 34px;border-radius:28px;background:linear-gradient(180deg,#2a1552,#1b0d38);
+  border:2px solid var(--gold);box-shadow:0 0 60px rgba(255,180,60,.45);max-width:88vw}
+.hatch .big-dragon{font-size:86px;animation:hatchpop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes hatchpop{0%{transform:scale(.2) rotate(-25deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+.hatch h3{margin:8px 0 4px;font-size:24px;color:var(--gold)}
+.hatch p{margin:0 0 16px;color:var(--text-dim);font-size:14px;line-height:1.7}
+.sparkle{position:fixed;pointer-events:none;z-index:60;font-size:22px;animation:spark .9s ease-out forwards}
+@keyframes spark{0%{transform:translate(0,0) scale(.5);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.35);opacity:0}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .7s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scaleY(.8) scaleX(1.05)}to{transform:scaleY(1.2) scaleX(.9)}}
+.hidden{display:none!important}
+footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo">
+      <div class="dragon">🐉</div>
+      <h1>龙之钟塔<small>DRAGON CLOCK · 学看钟表</small></h1>
+    </div>
+    <div class="header-right">
+      <div class="score">⭐ <span id="starCount">0</span></div>
+      <div class="score">🐲 <span id="dragonCount">0</span></div>
+      <button class="icon-btn" id="soundBtn" title="声音开关">🔊</button>
+      <button class="icon-btn" id="helpBtn" title="玩法说明">❓</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab active" data-mode="free">🐲 自由玩钟</div>
+    <div class="tab" data-mode="elapse">⏳ 时间流逝</div>
+    <div class="tab" data-mode="convert">🔄 时分换算</div>
+  </div>
+
+  <div class="stage">
+
+    <!-- ================= LEFT: CLOCK ================= -->
+    <div>
+      <div class="card clock-box">
+        <svg id="clock" viewBox="-300 -330 600 650" role="img" aria-label="龙主题钟面">
+          <defs>
+            <radialGradient id="faceGrad" cx="50%" cy="38%" r="70%">
+              <stop offset="0%" stop-color="#20456b"/>
+              <stop offset="55%" stop-color="#16294f"/>
+              <stop offset="100%" stop-color="#0d1633"/>
+            </radialGradient>
+            <linearGradient id="goldGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#fff2c4"/>
+              <stop offset="45%" stop-color="#ffce5c"/>
+              <stop offset="100%" stop-color="#d8861a"/>
+            </linearGradient>
+            <linearGradient id="jadeGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8ff7d0"/>
+              <stop offset="55%" stop-color="#3fd6a0"/>
+              <stop offset="100%" stop-color="#128f63"/>
+            </linearGradient>
+            <linearGradient id="emberGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffe08a"/>
+              <stop offset="40%" stop-color="#ff9a3c"/>
+              <stop offset="100%" stop-color="#e0431d"/>
+            </linearGradient>
+            <linearGradient id="wingGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#7a3fd6"/>
+              <stop offset="60%" stop-color="#4a2394"/>
+              <stop offset="100%" stop-color="#2a1160"/>
+            </linearGradient>
+            <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(255,190,80,.42)"/>
+              <stop offset="70%" stop-color="rgba(255,120,60,.12)"/>
+              <stop offset="100%" stop-color="rgba(255,120,60,0)"/>
+            </radialGradient>
+            <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+              <feDropShadow dx="0" dy="6" stdDeviation="7" flood-color="#000" flood-opacity=".45"/>
+            </filter>
+            <filter id="handShadow" x="-60%" y="-60%" width="220%" height="220%">
+              <feDropShadow dx="3" dy="7" stdDeviation="5" flood-color="#000" flood-opacity=".5"/>
+            </filter>
+          </defs>
+
+          <circle cx="0" cy="10" r="270" fill="url(#glowGrad)"/>
+          <g id="dragonArt"></g>
+          <g id="dialArt"></g>
+          <g id="handsArt"></g>
+        </svg>
+
+        <div class="digital">
+          <div class="ampm" id="ampm">上午</div>
+          <div class="dtime" id="dtime">09:00</div>
+          <div class="d24">24小时制<br><span id="d24">09:00</span></div>
+        </div>
+        <div class="say" id="sayText">上午九点整<span class="hint">拖动金色分针或玉色时针，让时间走起来</span></div>
+      </div>
+    </div>
+
+    <!-- ================= RIGHT: PANELS ================= -->
+    <div>
+
+      <!-- ---------- FREE MODE ---------- -->
+      <div id="panel-free">
+        <div class="card">
+          <h2>⏩ 让时间流逝</h2>
+          <div class="row">
+            <span class="label">走多久：</span>
+            <div class="seg" id="unitSeg">
+              <button data-unit="hm" class="on">小时 + 分钟</button>
+              <button data-unit="min">只用分钟</button>
+            </div>
+          </div>
+          <div class="row" id="hmInputs">
+            <div class="stepper"><button data-step="h-1">−</button><span class="val" id="valH">1</span><span class="unit">小时</span><button data-step="h+1">＋</button></div>
+            <div class="stepper"><button data-step="m-5">−</button><span class="val" id="valM">30</span><span class="unit">分钟</span><button data-step="m+5">＋</button></div>
+          </div>
+          <div class="row hidden" id="minInputs">
+            <div class="stepper"><button data-step="t-5">−</button><span class="val" id="valT">45</span><span class="unit">分钟</span><button data-step="t+5">＋</button></div>
+            <button class="btn ghost sm" data-quick="15">15分</button>
+            <button class="btn ghost sm" data-quick="30">30分</button>
+            <button class="btn ghost sm" data-quick="60">60分</button>
+            <button class="btn ghost sm" data-quick="90">90分</button>
+          </div>
+          <div class="row">
+            <button class="btn jade big" id="goFwd">▶ 时间前进</button>
+            <button class="btn ghost" id="goBack">◀ 倒回</button>
+          </div>
+          <div class="row">
+            <span class="label">小步调整：</span>
+            <button class="btn ghost sm" data-nudge="-60">−1时</button>
+            <button class="btn ghost sm" data-nudge="-5">−5分</button>
+            <button class="btn ghost sm" data-nudge="-1">−1分</button>
+            <button class="btn ghost sm" data-nudge="1">+1分</button>
+            <button class="btn ghost sm" data-nudge="5">+5分</button>
+            <button class="btn ghost sm" data-nudge="60">+1时</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📏 经过了多少时间</h2>
+          <div class="elapsed">
+            <div class="line">起点 <span class="chip" id="anchorChip">09:00</span> ➜ 现在 <span class="chip" id="nowChip">09:00</span></div>
+            <div class="line" style="margin-top:8px">经过了 <b id="elapsedHM">0分钟</b> <span class="eq">=</span> <b id="elapsedMin">0分钟</b></div>
+          </div>
+          <div class="row">
+            <button class="btn sm" id="setAnchor">📍 把现在设为起点</button>
+            <button class="btn ghost sm" id="randTime">🎲 随机时间</button>
+            <button class="btn ghost sm" id="nowTime">🕐 现在几点</button>
+          </div>
+          <div class="row">
+            <span class="label">指针对齐：</span>
+            <div class="seg" id="snapSeg">
+              <button data-snap="1" class="on">1分</button>
+              <button data-snap="5">5分</button>
+              <button data-snap="15">15分</button>
+            </div>
+            <button class="btn ghost sm" id="runBtn">⏱ 自动走</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---------- ELAPSE QUIZ ---------- -->
+      <div id="panel-elapse" class="hidden">
+        <div class="card">
+          <h2>⏳ 时间流逝挑战</h2>
+          <div class="row">
+            <span class="label">题目用：</span>
+            <div class="seg" id="qUnitSeg">
+              <button data-qunit="hm" class="on">小时+分钟</button>
+              <button data-qunit="min">只用分钟</button>
+            </div>
+          </div>
+          <div class="row">
+            <span class="label">难度：</span>
+            <div class="seg" id="qLevelSeg">
+              <button data-level="1" class="on">🐣 简单</button>
+              <button data-level="2">🐉 进阶</button>
+              <button data-level="3">🔥 挑战</button>
+            </div>
+          </div>
+          <div class="question" id="eQuestion">点击「出题」开始</div>
+          <div class="mini-row" id="eMini"></div>
+          <div id="eAnswerArea"></div>
+          <div class="feedback" id="eFeedback"></div>
+          <div class="row" style="justify-content:center">
+            <button class="btn jade big" id="eCheck">✅ 检查答案</button>
+            <button class="btn" id="eNew">🎲 出题</button>
+            <button class="btn ghost sm" id="eHint">💡 提示</button>
+          </div>
+          <div class="progress" style="margin-top:12px"><i id="eBar"></i></div>
+          <div class="streak" id="eStreak">本轮：0 / 10　连对：0</div>
+        </div>
+      </div>
+
+      <!-- ---------- CONVERT QUIZ ---------- -->
+      <div id="panel-convert" class="hidden">
+        <div class="card">
+          <h2>🔄 小时 ⇄ 分钟 换算</h2>
+          <div class="row">
+            <span class="label">难度：</span>
+            <div class="seg" id="cLevelSeg">
+              <button data-clevel="1" class="on">🐣 简单</button>
+              <button data-clevel="2">🐉 进阶</button>
+              <button data-clevel="3">🔥 挑战</button>
+            </div>
+          </div>
+          <div class="question" id="cQuestion">点击「出题」开始</div>
+          <div class="answer-box" id="cAnswer"></div>
+          <div class="pad" id="cPad"></div>
+          <div class="feedback" id="cFeedback"></div>
+          <div class="row" style="justify-content:center">
+            <button class="btn jade big" id="cCheck">✅ 检查答案</button>
+            <button class="btn" id="cNew">🎲 出题</button>
+            <button class="btn ghost sm" id="cHint">💡 提示</button>
+          </div>
+          <div class="progress" style="margin-top:12px"><i id="cBar"></i></div>
+          <div class="streak" id="cStreak">本轮：0 / 10　连对：0</div>
+        </div>
+      </div>
+
+      <!-- ---------- REWARDS ---------- -->
+      <div class="card">
+        <h2>🥚 龙蛋与伙伴</h2>
+        <div class="eggbar">
+          <span class="label">再答对</span><span class="chip" id="toHatch">5</span><span class="label">题就孵出一条龙！</span>
+        </div>
+        <div class="eggbar" style="margin-top:8px" id="eggRow"></div>
+        <div class="collection" id="collection"><span class="muted">还没有龙伙伴，加油答题吧！</span></div>
+      </div>
+
+      <!-- ---------- HELP ---------- -->
+      <div class="card hidden" id="helpCard">
+        <h2>📖 玩法说明</h2>
+        <ul class="muted help">
+          <li><b>拖指针</b>：用手指或鼠标拖动<b>金色分针</b>（长）或<b>玉色时针</b>（短）。分针转一圈，时针自动走 1 小时，就像真钟表一样。</li>
+          <li><b>数字表</b>：钟面下面会同时显示 12 小时制、24 小时制和中文读法。</li>
+          <li><b>时间流逝</b>：选「小时+分钟」或「只用分钟」，按 ▶ 让指针自己走过去，看看到了几点。</li>
+          <li><b>换算口诀</b>：<b>1 小时 = 60 分钟</b>；半小时 = 30 分钟；一刻钟 = 15 分钟。</li>
+          <li><b>奖励</b>：每答对 1 题得 ⭐，每 5 颗星孵出一条小龙 🐲。</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>🐉 给最棒的小龙骑士 · 用手指拖着指针，时间就是你的魔法 🐉</footer>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="hatch">
+    <div class="big-dragon" id="hatchEmoji">🐲</div>
+    <h3 id="hatchName">火焰龙 · 焰焰</h3>
+    <p id="hatchDesc">恭喜！你的龙蛋孵化啦！</p>
+    <button class="btn big" id="closeOverlay">太棒了！继续</button>
+  </div>
+</div>
+<script>
+(function(){
+"use strict";
+
+/* =====================================================================
+   0. 基础工具
+   ===================================================================== */
+const $  = (s,r)=> (r||document).querySelector(s);
+const $$ = (s,r)=> Array.from((r||document).querySelectorAll(s));
+const SVGNS = "http://www.w3.org/2000/svg";
+const pad2 = n => String(n).padStart(2,"0");
+const clamp = (v,a,b)=> Math.max(a, Math.min(b,v));
+const randInt = (a,b)=> a + Math.floor(Math.random()*(b-a+1));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const polar = (r,deg)=>{ const a=(deg-90)*Math.PI/180; return [r*Math.cos(a), r*Math.sin(a)]; };
+const el = (tag,attrs,parent)=>{
+  const n = document.createElementNS(SVGNS,tag);
+  for(const k in attrs) n.setAttribute(k, attrs[k]);
+  if(parent) parent.appendChild(n);
+  return n;
+};
+
+/* 几何常量（SVG 用户单位） */
+const R_BEZEL = 196, R_FACE = 160, R_TICK = 152;
+const HOUR_LEN = 92, MIN_LEN = 138;
+
+/* =====================================================================
+   1. 状态
+   ===================================================================== */
+const SAVE_KEY = "dragonClock.v1";
+const S = {
+  exact: 9*60,        // 浮点分钟（可超出 0~1440，渲染时取模）
+  minutes: 9*60,      // 对齐后的分钟
+  anchor: 9*60,       // 「起点」时间
+  snap: 1,
+  sound: true,
+  running: false,
+  mode: "free",
+  stars: 0,
+  dragons: [],
+  /* 时间流逝挑战 */
+  e: { unit:"hm", level:1, q:null, done:0, right:0, streak:0, hintUsed:false, ans:{h:0,m:0} },
+  /* 换算挑战 */
+  c: { level:1, q:null, done:0, right:0, streak:0, slots:[""], active:0 }
+};
+
+function save(){
+  try{ localStorage.setItem(SAVE_KEY, JSON.stringify({stars:S.stars, dragons:S.dragons, sound:S.sound})); }catch(e){}
+}
+function load(){
+  try{
+    const d = JSON.parse(localStorage.getItem(SAVE_KEY)||"{}");
+    if(typeof d.stars==="number") S.stars = d.stars;
+    if(Array.isArray(d.dragons)) S.dragons = d.dragons;
+    if(typeof d.sound==="boolean") S.sound = d.sound;
+  }catch(e){}
+}
+
+/* =====================================================================
+   2. 声音（WebAudio，不依赖任何文件）
+   ===================================================================== */
+let actx = null;
+function ac(){ if(!actx){ try{ actx = new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return actx; }
+function beep(freq, dur, type, vol, delay){
+  if(!S.sound) return;
+  const c = ac(); if(!c) return;
+  const t0 = c.currentTime + (delay||0);
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = type||"sine"; o.frequency.setValueAtTime(freq, t0);
+  g.gain.setValueAtTime(0.0001, t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.16, t0+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0+(dur||0.15));
+  o.connect(g); g.connect(c.destination);
+  o.start(t0); o.stop(t0+(dur||0.15)+0.03);
+}
+const sfx = {
+  tick(){ beep(1180, 0.04, "square", 0.05); },
+  clunk(){ beep(560, 0.07, "triangle", 0.09); },
+  good(){ [0,0.09,0.18,0.30].forEach((d,i)=> beep([659,784,988,1319][i], 0.2, "sine", 0.16, d)); },
+  bad(){ beep(200, 0.18, "sawtooth", 0.09); beep(150, 0.22, "sawtooth", 0.09, 0.14); },
+  roar(){
+    if(!S.sound) return; const c = ac(); if(!c) return;
+    const t0 = c.currentTime;
+    const o = c.createOscillator(), g = c.createGain(), f = c.createBiquadFilter();
+    o.type="sawtooth"; o.frequency.setValueAtTime(90,t0); o.frequency.exponentialRampToValueAtTime(320,t0+0.5);
+    f.type="lowpass"; f.frequency.setValueAtTime(400,t0); f.frequency.exponentialRampToValueAtTime(2200,t0+0.5);
+    g.gain.setValueAtTime(0.0001,t0); g.gain.exponentialRampToValueAtTime(0.2,t0+0.06);
+    g.gain.exponentialRampToValueAtTime(0.0001,t0+0.8);
+    o.connect(f); f.connect(g); g.connect(c.destination); o.start(t0); o.stop(t0+0.9);
+    [523,659,784,1047].forEach((fr,i)=> beep(fr,0.3,"sine",0.14, 0.5+i*0.1));
+  }
+};
+
+/* =====================================================================
+   3. 画龙 + 画表盘
+   ===================================================================== */
+function buildDragon(){
+  const g = $("#dragonArt"); g.innerHTML = "";
+
+  /* --- 翅膀（左右对称） --- */
+  const wingPath =
+    "M -70 -120 C -140 -206 -236 -222 -292 -178 "+
+    "C -264 -168 -252 -150 -250 -128 "+
+    "C -266 -132 -282 -126 -292 -112 "+
+    "C -262 -102 -246 -84 -242 -60 "+
+    "C -256 -58 -270 -48 -278 -32 "+
+    "C -240 -28 -208 -6 -190 30 "+
+    "C -150 -6 -104 -58 -70 -120 Z";
+  const wingRib =
+    "M -80 -116 C -140 -150 -200 -166 -258 -166 M -80 -116 C -136 -122 -192 -108 -244 -84 "+
+    "M -80 -116 C -128 -88 -170 -48 -196 4";
+  [1,-1].forEach(sx=>{
+    const w = el("g",{transform:"scale("+sx+",1)"},g);
+    el("path",{d:wingPath, fill:"url(#wingGrad)", stroke:"#8a5ce0", "stroke-width":"3",
+               "stroke-linejoin":"round", opacity:"0.96", filter:"url(#softShadow)"},w);
+    el("path",{d:wingRib, fill:"none", stroke:"rgba(180,150,255,.55)", "stroke-width":"3", "stroke-linecap":"round"},w);
+  });
+
+  /* --- 尾巴（底部绕过表盘） --- */
+  el("path",{d:"M -30 150 C -60 236 30 268 120 246 C 176 232 206 250 214 274",
+             fill:"none", stroke:"#4a2394", "stroke-width":"30", "stroke-linecap":"round", opacity:".95"},g);
+  el("path",{d:"M -30 150 C -60 236 30 268 120 246 C 176 232 206 250 214 274",
+             fill:"none", stroke:"#7a3fd6", "stroke-width":"18", "stroke-linecap":"round"},g);
+  el("path",{d:"M 210 250 C 246 238 268 252 258 276 C 248 298 216 296 206 278 Z",
+             fill:"url(#emberGrad)", stroke:"#c0521c", "stroke-width":"3"},g);
+
+  /* --- 爪子（托住表盘） --- */
+  [1,-1].forEach(sx=>{
+    const c = el("g",{transform:"translate("+(sx*132)+",172) rotate("+(sx*24)+")"},g);
+    el("path",{d:"M -34 -10 C -40 18 -20 36 6 34 C 32 32 46 14 40 -12 Z",
+               fill:"#3b8f6d", stroke:"#1d6b4d", "stroke-width":"3"},c);
+    [-26,-4,18].forEach(x=>{
+      el("path",{d:"M "+x+" 22 C "+(x-4)+" 40 "+(x+6)+" 48 "+(x+12)+" 40 L "+(x+6)+" 22 Z",
+                 fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"2"},c);
+    });
+  });
+
+  /* --- 龙头（表盘上方） --- */
+  /* 脖子 */
+  el("path",{d:"M -46 -150 C -52 -200 -40 -232 0 -240 C 40 -232 52 -200 46 -150 Z",
+             fill:"#2aa87a", stroke:"#0f7a55", "stroke-width":"3"},g);
+  const h = el("g",{transform:"translate(0,-252)", filter:"url(#softShadow)"},g);
+  /* 角 */
+  [1,-1].forEach(sx=>{
+    el("path",{transform:"scale("+sx+",1)",
+      d:"M -24 -40 C -40 -60 -54 -88 -52 -116 C -30 -98 -14 -70 -8 -48 C -14 -46 -20 -44 -24 -40 Z",
+      fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"2.5", "stroke-linejoin":"round"},h);
+  });
+  /* 侧鳍 */
+  [1,-1].forEach(sx=>{
+    el("path",{transform:"scale("+sx+",1)",
+      d:"M -44 -12 C -66 -22 -86 -20 -96 -8 C -82 -2 -70 8 -62 20 C -54 6 -48 -4 -44 -12 Z",
+      fill:"#2aa87a", stroke:"#0f7a55", "stroke-width":"2.5"},h);
+  });
+  /* 头 */
+  el("path",{d:"M -58 8 C -66 -24 -46 -52 -16 -60 C -4 -63 4 -63 16 -60 C 46 -52 66 -24 58 8 "+
+               "C 52 34 28 50 0 50 C -28 50 -52 34 -58 8 Z",
+             fill:"url(#jadeGrad)", stroke:"#0f7a55", "stroke-width":"3"},h);
+  /* 吻部 */
+  el("path",{d:"M -30 18 C -30 38 -16 50 0 50 C 16 50 30 38 30 18 C 20 26 -20 26 -30 18 Z",
+             fill:"#8ff7d0", opacity:".85"},h);
+  /* 眼睛 */
+  [1,-1].forEach(sx=>{
+    el("ellipse",{cx:sx*24, cy:-8, rx:12, ry:13, fill:"#fff6d8"},h);
+    el("ellipse",{cx:sx*24, cy:-8, rx:4.5, ry:11, fill:"#1b0d38"},h);
+    el("circle",{cx:sx*24-3, cy:-13, r:2.6, fill:"#fff"},h);
+  });
+  /* 鼻孔 */
+  [1,-1].forEach(sx=> el("ellipse",{cx:sx*9, cy:26, rx:4, ry:3, fill:"#0f7a55"},h));
+  /* 小火苗 */
+  const fl = el("g",{transform:"translate(96,14) rotate(34) scale(1.15)"},h);
+  el("path",{d:"M 0 26 C -14 12 -10 -2 0 -16 C 10 -2 14 12 0 26 Z", fill:"url(#emberGrad)",
+             opacity:".9", class:"flame"},fl);
+}
+
+function buildDial(){
+  const g = $("#dialArt"); g.innerHTML = "";
+
+  /* 外圈龙鳞 */
+  el("circle",{cx:0,cy:0,r:R_BEZEL, fill:"#241148", stroke:"url(#goldGrad)", "stroke-width":"7", filter:"url(#softShadow)"},g);
+  [[190,34],[178,30],[167,26]].forEach(([rr,n],ri)=>{
+    for(let i=0;i<n;i++){
+      const a = i*360/n + (ri%2? 180/n : 0);
+      const w = 360/n/2*0.92;
+      const [x1,y1] = polar(rr, a-w), [x2,y2] = polar(rr, a+w), [xt,yt] = polar(rr+9, a);
+      el("path",{d:"M "+x1+" "+y1+" Q "+xt+" "+yt+" "+x2+" "+y2+" Z",
+        fill: ri===0 ? "rgba(255,206,92,.20)" : (ri===1? "rgba(122,63,214,.45)":"rgba(63,214,160,.22)"),
+        stroke:"rgba(255,206,92,.35)", "stroke-width":"1.4"},g);
+    }
+  });
+  el("circle",{cx:0,cy:0,r:R_FACE+4, fill:"none", stroke:"url(#goldGrad)", "stroke-width":"4"},g);
+  /* 盘面 */
+  el("circle",{cx:0,cy:0,r:R_FACE, fill:"url(#faceGrad)"},g);
+  el("circle",{cx:0,cy:0,r:R_FACE-2, fill:"none", stroke:"rgba(255,255,255,.08)", "stroke-width":"2"},g);
+
+  /* 分钟刻度 */
+  for(let i=0;i<60;i++){
+    const a = i*6, major = i%5===0;
+    const [x1,y1] = polar(R_TICK, a);
+    const [x2,y2] = polar(major? R_TICK-18 : R_TICK-9, a);
+    el("line",{x1:x1,y1:y1,x2:x2,y2:y2,
+      stroke: major? "#ffce5c" : "rgba(255,255,255,.45)",
+      "stroke-width": major? 6:2.5, "stroke-linecap":"round"},g);
+  }
+  /* 小时数字 */
+  for(let i=1;i<=12;i++){
+    const [x,y] = polar(104, i*30);
+    const t = el("text",{x:x,y:y, fill:"url(#goldGrad)", "font-size":"40", "font-weight":"800",
+      "text-anchor":"middle", "dominant-baseline":"central",
+      "font-family":'"PingFang SC","Microsoft YaHei",sans-serif', stroke:"rgba(0,0,0,.35)","stroke-width":"1"},g);
+    t.textContent = i;
+  }
+  /* 分钟数字（5 的倍数，帮助换算） */
+  for(let i=0;i<12;i++){
+    const m = i*5;
+    const [x,y] = polar(133, i*30);
+    const t = el("text",{x:x,y:y, fill:"#3fd6a0", "font-size":"17", "font-weight":"800",
+      "text-anchor":"middle", "dominant-baseline":"central",
+      "font-family":'"PingFang SC","Microsoft YaHei",sans-serif'},g);
+    t.textContent = m===0 ? "60" : m;
+  }
+  /* 中心提示环 */
+  el("circle",{cx:0,cy:0,r:36, fill:"rgba(0,0,0,.25)"},g);
+}
+
+function buildHands(){
+  const g = $("#handsArt"); g.innerHTML = "";
+
+  /* 时针：玉色龙爪（短） */
+  const hourG = el("g",{id:"hourHand", filter:"url(#handShadow)"},g);
+  el("path",{d:"M 0 26 C -13 22 -19 10 -16 -6 L -11 -"+(HOUR_LEN-26)+
+               " C -12 -"+(HOUR_LEN-8)+" -6 -"+HOUR_LEN+" 0 -"+(HOUR_LEN+8)+
+               " C 6 -"+HOUR_LEN+" 12 -"+(HOUR_LEN-8)+" 11 -"+(HOUR_LEN-26)+
+               " L 16 -6 C 19 10 13 22 0 26 Z",
+    fill:"url(#jadeGrad)", stroke:"#0f7a55", "stroke-width":"3.5", "stroke-linejoin":"round"},hourG);
+  el("path",{d:"M 0 -"+(HOUR_LEN-34)+" L 0 -"+(HOUR_LEN+2), stroke:"rgba(255,255,255,.55)", "stroke-width":"3",
+    "stroke-linecap":"round"},hourG);
+  el("circle",{cx:0,cy:34,r:13, fill:"url(#jadeGrad)", stroke:"#0f7a55","stroke-width":"3"},hourG);
+
+  /* 分针：金色火焰长针 */
+  const minG = el("g",{id:"minHand", filter:"url(#handShadow)"},g);
+  el("path",{d:"M 0 30 C -12 26 -17 14 -14 -2 L -8 -"+(MIN_LEN-40)+
+               " C -11 -"+(MIN_LEN-14)+" -6 -"+(MIN_LEN-4)+" 0 -"+MIN_LEN+
+               " C 6 -"+(MIN_LEN-4)+" 11 -"+(MIN_LEN-14)+" 8 -"+(MIN_LEN-40)+
+               " L 14 -2 C 17 14 12 26 0 30 Z",
+    fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"3.5", "stroke-linejoin":"round"},minG);
+  el("path",{d:"M 0 -"+(MIN_LEN-52)+" L 0 -"+(MIN_LEN-6), stroke:"rgba(255,255,255,.6)", "stroke-width":"3",
+    "stroke-linecap":"round"},minG);
+  el("circle",{cx:0,cy:40,r:15, fill:"url(#goldGrad)", stroke:"#a8710f","stroke-width":"3"},minG);
+
+  /* 中心龙眼 */
+  const c = el("g",{},g);
+  el("circle",{cx:0,cy:0,r:22, fill:"#1b0d38", stroke:"url(#goldGrad)", "stroke-width":"4"},c);
+  el("ellipse",{cx:0,cy:0,rx:13,ry:15, fill:"#ffd76a"},c);
+  el("ellipse",{cx:0,cy:0,rx:4.5,ry:13, fill:"#1b0d38"},c);
+  el("circle",{cx:-4,cy:-5,r:3, fill:"#fff", opacity:".9"},c);
+}
+
+/* =====================================================================
+   4. 时间显示
+   ===================================================================== */
+const norm = m => ((m % 1440) + 1440) % 1440;
+
+function periodOf(h24){
+  if(h24 < 6) return "凌晨";
+  if(h24 < 12) return "上午";
+  if(h24 < 13) return "中午";
+  if(h24 < 18) return "下午";
+  return "晚上";
+}
+const CN = ["零","一","二","三","四","五","六","七","八","九","十","十一","十二"];
+function cnMinutes(m){
+  if(m<10) return "零" + CN[m] + "分";
+  if(m===10) return "十分";
+  if(m<20) return "十" + CN[m-10] + "分";
+  const t = Math.floor(m/10), o = m%10;
+  return CN[t] + "十" + (o? CN[o]:"") + "分";
+}
+function sayTime(mins){
+  const m = norm(mins), h24 = Math.floor(m/60), mm = m%60;
+  const h12 = (h24%12)===0 ? 12 : h24%12;
+  const p = periodOf(h24);
+  if(mm===0)  return p + CN[h12] + "点整";
+  if(mm===30) return p + CN[h12] + "点半";
+  if(mm===15) return p + CN[h12] + "点一刻";
+  if(mm===45) return p + CN[h12] + "点三刻";
+  return p + CN[h12] + "点" + cnMinutes(mm);
+}
+function hmText(total){
+  const t = Math.round(total);
+  if(t===0) return "0分钟";
+  const h = Math.floor(t/60), m = t%60;
+  if(h===0) return m + "分钟";
+  if(m===0) return h + "小时";
+  return h + "小时" + m + "分钟";
+}
+
+let lastShownMinute = -1;
+function render(){
+  const m = norm(S.minutes);
+  const h24 = Math.floor(m/60), mm = m%60;
+  const h12 = (h24%12)===0 ? 12 : h24%12;
+
+  $("#hourHand").setAttribute("transform","rotate("+((m%720)*0.5)+")");
+  $("#minHand").setAttribute("transform","rotate("+(mm*6)+")");
+
+  $("#dtime").textContent = pad2(h12)+":"+pad2(mm);
+  $("#ampm").innerHTML = periodOf(h24);
+  $("#d24").textContent = pad2(h24)+":"+pad2(mm);
+  $("#sayText").innerHTML = sayTime(m) +
+    '<span class="hint">分针（金）转一圈 = 60 分钟 = 1 小时 · 时针（玉）走一大格 = 1 小时</span>';
+
+  /* 自由模式：经过时间 */
+  const diff = norm(m - S.anchor);
+  $("#anchorChip").textContent = fmt12(S.anchor);
+  $("#nowChip").textContent = fmt12(m);
+  $("#elapsedHM").textContent = hmText(diff);
+  $("#elapsedMin").textContent = diff + "分钟";
+
+  if(m !== lastShownMinute){ lastShownMinute = m; }
+}
+function fmt12(mins){
+  const m = norm(mins), h24 = Math.floor(m/60);
+  const h12 = (h24%12)===0? 12 : h24%12;
+  return h12 + ":" + pad2(m%60);
+}
+
+/* 迷你钟（题目中展示） */
+function miniClock(mins, label){
+  const m = norm(mins);
+  const wrap = document.createElement("div"); wrap.className = "mini";
+  const svg = document.createElementNS(SVGNS,"svg");
+  svg.setAttribute("viewBox","-100 -100 200 200");
+  el("circle",{cx:0,cy:0,r:92, fill:"#241148", stroke:"#ffce5c","stroke-width":"6"},svg);
+  el("circle",{cx:0,cy:0,r:80, fill:"#16294f"},svg);
+  for(let i=0;i<60;i++){
+    const a=i*6, major=i%5===0;
+    const [x1,y1]=polar(76,a), [x2,y2]=polar(major?66:71,a);
+    el("line",{x1,y1,x2,y2, stroke: major?"#ffce5c":"rgba(255,255,255,.4)", "stroke-width": major?4:1.6,
+      "stroke-linecap":"round"},svg);
+  }
+  for(let i=3;i<=12;i+=3){
+    const [x,y]=polar(52,i*30);
+    const t = el("text",{x,y, fill:"#ffce5c","font-size":"22","font-weight":"800","text-anchor":"middle",
+      "dominant-baseline":"central"},svg);
+    t.textContent = i;
+  }
+  el("path",{d:"M 0 12 L -7 0 L 0 -46 L 7 0 Z", fill:"#3fd6a0", stroke:"#0f7a55","stroke-width":"2",
+    transform:"rotate("+((m%720)*0.5)+")"},svg);
+  el("path",{d:"M 0 14 L -6 0 L 0 -70 L 6 0 Z", fill:"#ffce5c", stroke:"#a8710f","stroke-width":"2",
+    transform:"rotate("+((m%60)*6)+")"},svg);
+  el("circle",{cx:0,cy:0,r:8, fill:"#1b0d38", stroke:"#ffce5c","stroke-width":"3"},svg);
+  wrap.appendChild(svg);
+  const cap = document.createElement("span");
+  cap.textContent = label + "　" + fmt12(m);
+  wrap.appendChild(cap);
+  return wrap;
+}
+
+/* =====================================================================
+   5. 拖动指针
+   ===================================================================== */
+const clockSvg = $("#clock");
+let drag = null;
+
+function toSvg(evt){
+  const pt = clockSvg.createSVGPoint();
+  pt.x = evt.clientX; pt.y = evt.clientY;
+  const m = clockSvg.getScreenCTM();
+  if(!m) return {x:0,y:0};
+  const p = pt.matrixTransform(m.inverse());
+  return {x:p.x, y:p.y};
+}
+const angleAt = p => (Math.atan2(p.x, -p.y) * 180 / Math.PI + 360) % 360;
+const angDiff = (a,b)=>{ let d = Math.abs(a-b)%360; return d>180 ? 360-d : d; };
+function wrap180(d){ while(d>180) d-=360; while(d<-180) d+=360; return d; }
+
+function pickHand(p){
+  const r = Math.hypot(p.x,p.y);
+  const a = angleAt(p);
+  const m = norm(S.minutes);
+  const dM = angDiff(a, (m%60)*6);
+  const dH = angDiff(a, (m%720)*0.5);
+  if(r > HOUR_LEN + 14) return "min";
+  if(dH < dM - 3) return "hour";
+  if(dM < dH - 3) return "min";
+  return r < 62 ? "hour" : "min";
+}
+
+function applySnap(){
+  const step = S.snap;
+  S.minutes = Math.round(S.exact/step)*step;
+}
+
+function startDrag(evt){
+  if(evt.button !== undefined && evt.button !== 0) return;
+  const p = toSvg(evt);
+  const r = Math.hypot(p.x,p.y);
+  if(r > R_BEZEL) return;               // 盘面（含龙鳞外圈）内都能抓
+  stopRun();
+  drag = { hand: pickHand(p), last: angleAt(p) };
+  S.exact = S.minutes;
+  clockSvg.classList.add("grabbing");
+  clockSvg.setPointerCapture && clockSvg.setPointerCapture(evt.pointerId);
+  highlightHand(drag.hand, true);
+  evt.preventDefault();
+}
+function moveDrag(evt){
+  if(!drag) return;
+  const p = toSvg(evt);
+  const a = angleAt(p);
+  const d = wrap180(a - drag.last);
+  drag.last = a;
+  S.exact += drag.hand === "min" ? d/6 : d*2;   // 分针 6°/分；时针 0.5°/分
+  const before = S.minutes;
+  applySnap();
+  if(before !== S.minutes){ sfx.tick(); render(); }
+  evt.preventDefault();
+}
+function endDrag(evt){
+  if(!drag) return;
+  highlightHand(drag.hand,false);
+  drag = null;
+  S.exact = S.minutes;
+  clockSvg.classList.remove("grabbing");
+  sfx.clunk();
+  render();
+}
+function highlightHand(which,on){
+  const node = $(which==="min" ? "#minHand" : "#hourHand");
+  node.style.filter = on ? "drop-shadow(0 0 14px rgba(255,220,120,.95))" : "url(#handShadow)";
+}
+clockSvg.addEventListener("pointerdown", startDrag);
+clockSvg.addEventListener("pointermove", moveDrag);
+clockSvg.addEventListener("pointerup", endDrag);
+clockSvg.addEventListener("pointercancel", endDrag);
+
+/* =====================================================================
+   6. 时间流逝动画
+   ===================================================================== */
+let animId = null, runId = null;
+function travel(deltaMinutes){
+  if(animId) cancelAnimationFrame(animId);
+  stopRun();
+  const from = S.minutes, to = S.minutes + deltaMinutes;
+  const dur = clamp(Math.abs(deltaMinutes) * 9, 700, 2200);
+  const t0 = performance.now();
+  let lastTick = from;
+  function step(now){
+    const k = clamp((now - t0)/dur, 0, 1);
+    const e = k<0.5 ? 4*k*k*k : 1-Math.pow(-2*k+2,3)/2;   // easeInOutCubic
+    S.exact = from + (to-from)*e;
+    S.minutes = Math.round(S.exact);
+    if(Math.abs(S.minutes-lastTick) >= 5){ lastTick = S.minutes; sfx.tick(); }
+    render();
+    if(k<1) animId = requestAnimationFrame(step);
+    else { S.exact = to; S.minutes = norm(to); render(); sfx.clunk(); animId = null; }
+  }
+  animId = requestAnimationFrame(step);
+}
+function stopRun(){
+  if(runId){ clearInterval(runId); runId = null; S.running = false; $("#runBtn").textContent = "⏱ 自动走"; }
+}
+function toggleRun(){
+  if(runId){ stopRun(); return; }
+  S.running = true; $("#runBtn").textContent = "⏸ 停一下";
+  runId = setInterval(()=>{
+    S.minutes = norm(S.minutes+1); S.exact = S.minutes; sfx.tick(); render();
+  }, 420);
+}
+
+/* =====================================================================
+   7. 自由模式控件
+   ===================================================================== */
+const free = { unit:"hm", h:1, m:30, t:45 };
+function renderFree(){
+  $("#valH").textContent = free.h;
+  $("#valM").textContent = free.m;
+  $("#valT").textContent = free.t;
+  $("#hmInputs").classList.toggle("hidden", free.unit!=="hm");
+  $("#minInputs").classList.toggle("hidden", free.unit!=="min");
+}
+function freeDelta(){ return free.unit==="hm" ? free.h*60 + free.m : free.t; }
+
+$("#unitSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  free.unit = b.dataset.unit;
+  $$("#unitSeg button").forEach(x=> x.classList.toggle("on", x===b));
+  renderFree();
+});
+$$("#hmInputs .stepper button, #minInputs .stepper button").forEach(b=>{
+  b.addEventListener("click", ()=>{
+    const s = b.dataset.step;
+    if(s==="h+1") free.h = clamp(free.h+1,0,11);
+    if(s==="h-1") free.h = clamp(free.h-1,0,11);
+    if(s==="m+5") free.m = (free.m+5)%60;
+    if(s==="m-5") free.m = (free.m+55)%60;
+    if(s==="t+5") free.t = clamp(free.t+5,5,300);
+    if(s==="t-5") free.t = clamp(free.t-5,5,300);
+    sfx.tick(); renderFree();
+  });
+});
+$$("#minInputs [data-quick]").forEach(b=>{
+  b.addEventListener("click", ()=>{ free.t = +b.dataset.quick; sfx.tick(); renderFree(); });
+});
+$("#goFwd").addEventListener("click", ()=> travel(freeDelta()));
+$("#goBack").addEventListener("click", ()=> travel(-freeDelta()));
+$$("[data-nudge]").forEach(b=> b.addEventListener("click", ()=>{
+  stopRun(); S.minutes = norm(S.minutes + (+b.dataset.nudge)); S.exact = S.minutes; sfx.tick(); render();
+}));
+$("#setAnchor").addEventListener("click", ()=>{ S.anchor = norm(S.minutes); sfx.clunk(); render(); });
+$("#randTime").addEventListener("click", ()=>{
+  stopRun();
+  S.minutes = randInt(0,23)*60 + randInt(0,11)*5;
+  S.exact = S.minutes; S.anchor = S.minutes; sfx.clunk(); render();
+});
+$("#nowTime").addEventListener("click", ()=>{
+  stopRun();
+  const d = new Date();
+  S.minutes = d.getHours()*60 + d.getMinutes();
+  S.exact = S.minutes; S.anchor = S.minutes; sfx.clunk(); render();
+});
+$("#snapSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  S.snap = +b.dataset.snap;
+  $$("#snapSeg button").forEach(x=> x.classList.toggle("on", x===b));
+  S.minutes = Math.round(S.minutes/S.snap)*S.snap; S.exact = S.minutes; render();
+});
+$("#runBtn").addEventListener("click", toggleRun);
+
+/* =====================================================================
+   8. 奖励：星星 & 龙蛋
+   ===================================================================== */
+const DRAGONS = [
+  {e:"🐲", n:"焰焰", d:"火焰小龙，最爱准时吃早饭！"},
+  {e:"🐉", n:"云青", d:"云中巨龙，一小时能飞 60 座山。"},
+  {e:"🦕", n:"绿绿", d:"森林龙，喜欢在半小时后打盹。"},
+  {e:"🐊", n:"沼沼", d:"沼泽龙，一刻钟就能抓到一条鱼。"},
+  {e:"🦎", n:"闪闪", d:"闪电龙，一分钟绕钟塔跑 12 圈。"},
+  {e:"🐍", n:"银环", d:"月光龙，晚上八点准时出来散步。"},
+  {e:"🦖", n:"轰轰", d:"雷鸣龙，最讨厌迟到！"},
+  {e:"🐢", n:"慢慢", d:"时光龟龙，走一步要 5 分钟。"}
+];
+function renderRewards(){
+  $("#starCount").textContent = S.stars;
+  $("#dragonCount").textContent = S.dragons.length;
+  const into = S.stars % 5;
+  $("#toHatch").textContent = 5 - into;
+  const row = $("#eggRow"); row.innerHTML = "";
+  for(let i=0;i<5;i++){
+    const s = document.createElement("span");
+    s.className = "egg" + (i<into ? " on" : "");
+    s.textContent = i<into ? "🥚" : "⚪";
+    row.appendChild(s);
+  }
+  const col = $("#collection");
+  if(!S.dragons.length){ col.innerHTML = '<span class="muted">还没有龙伙伴，加油答题吧！</span>'; return; }
+  col.innerHTML = "";
+  S.dragons.forEach(i=>{
+    const d = DRAGONS[i % DRAGONS.length];
+    const c = document.createElement("div"); c.className = "dcard";
+    c.innerHTML = '<span class="e">'+d.e+'</span><span class="n">'+d.n+'</span>';
+    c.title = d.d;
+    col.appendChild(c);
+  });
+}
+function addStar(x, y){
+  S.stars++;
+  sparkle(x,y);
+  if(S.stars % 5 === 0) hatchDragon();
+  save(); renderRewards();
+}
+function hatchDragon(){
+  const idx = S.dragons.length % DRAGONS.length;
+  S.dragons.push(idx);
+  const d = DRAGONS[idx];
+  $("#hatchEmoji").textContent = d.e;
+  $("#hatchName").textContent = d.n;
+  $("#hatchDesc").textContent = d.d + "　它会一直陪你练习看钟哦！";
+  $("#overlay").classList.add("show");
+  sfx.roar();
+  save();
+}
+$("#closeOverlay").addEventListener("click", ()=> $("#overlay").classList.remove("show"));
+function sparkle(x,y){
+  const cx = x!==undefined ? x : window.innerWidth/2;
+  const cy = y!==undefined ? y : window.innerHeight/2;
+  for(let i=0;i<12;i++){
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.textContent = pick(["⭐","✨","🔥","💫"]);
+    s.style.left = cx+"px"; s.style.top = cy+"px";
+    s.style.setProperty("--dx", (Math.random()*260-130)+"px");
+    s.style.setProperty("--dy", (-Math.random()*200-40)+"px");
+    document.body.appendChild(s);
+    setTimeout(()=> s.remove(), 1000);
+  }
+}
+
+/* =====================================================================
+   9. 时间流逝挑战
+   ===================================================================== */
+const E = S.e;
+function genStart(level){
+  const h = randInt(1,12)%12;
+  if(level===1) return h*60 + pick([0,15,30,45]);
+  if(level===2) return h*60 + randInt(0,11)*5;
+  return h*60 + randInt(0,59);
+}
+function genDelta(level, unit){
+  if(unit==="min"){
+    if(level===1) return pick([5,10,15,20,25,30,40,45]);
+    if(level===2) return pick([35,50,55,60,70,75,80,90]);
+    return randInt(13,155);
+  }
+  if(level===1) return randInt(1,2)*60 + pick([0,15,30]);
+  if(level===2) return randInt(1,3)*60 + randInt(0,11)*5;
+  return randInt(1,5)*60 + randInt(1,59);
+}
+function newElapseQuestion(){
+  stopRun();
+  const lv = E.level;
+  const type = Math.random() < 0.62 ? "end" : "span";
+  const start = genStart(lv);
+  const delta = genDelta(lv, E.unit);
+  E.q = { type, start, delta, end: norm(start+delta) };
+  E.hintUsed = false;
+  E.ans = { h:0, m:0 };
+
+  const qa = $("#eAnswerArea"); qa.innerHTML = "";
+  const mini = $("#eMini"); mini.innerHTML = "";
+
+  if(type === "end"){
+    S.minutes = start; S.exact = start; S.anchor = start; render();
+    $("#eQuestion").innerHTML = '现在是 <span class="q-num">'+fmt12(start)+'</span>，'+
+      '再过 <span class="q-num">'+deltaText(delta)+'</span> 是几点？<br>' +
+      '<span style="font-size:15px;color:var(--text-dim)">拖动大钟上的指针，指到正确的时间 👉</span>';
+    mini.appendChild(miniClock(start,"开始"));
+    const arrow = document.createElement("div");
+    arrow.className = "arrow"; arrow.innerHTML = "➜ "+deltaText(delta)+" ➜";
+    mini.appendChild(arrow);
+    const q = document.createElement("div");
+    q.className = "mini"; q.innerHTML = '<div style="font-size:64px">❓</div><span>你来拨</span>';
+    mini.appendChild(q);
+  }else{
+    $("#eQuestion").innerHTML = '从 <span class="q-num">'+fmt12(start)+'</span> 到 '+
+      '<span class="q-num">'+fmt12(E.q.end)+'</span>，经过了多长时间？';
+    mini.appendChild(miniClock(start,"开始"));
+    const arrow = document.createElement("div"); arrow.className="arrow"; arrow.textContent = "➜ ❓ ➜";
+    mini.appendChild(arrow);
+    mini.appendChild(miniClock(E.q.end,"结束"));
+    qa.appendChild(buildSpanInput());
+  }
+  $("#eFeedback").textContent = ""; $("#eFeedback").className = "feedback";
+  updateEProgress();
+}
+function deltaText(d){
+  if(E.unit === "min") return d + " 分钟";
+  return hmText(d);
+}
+function buildSpanInput(){
+  const box = document.createElement("div");
+  box.className = "row"; box.style.justifyContent = "center";
+  const mk = (key,label,step,max)=>{
+    const st = document.createElement("div"); st.className = "stepper";
+    const minus = document.createElement("button"); minus.textContent = "−";
+    const val = document.createElement("span"); val.className="val"; val.textContent = E.ans[key];
+    const unit = document.createElement("span"); unit.className="unit"; unit.textContent = label;
+    const plus = document.createElement("button"); plus.textContent = "＋";
+    minus.onclick = ()=>{ E.ans[key] = clamp(E.ans[key]-step, 0, max); val.textContent = E.ans[key]; sfx.tick(); };
+    plus.onclick  = ()=>{ E.ans[key] = clamp(E.ans[key]+step, 0, max); val.textContent = E.ans[key]; sfx.tick(); };
+    st.append(minus,val,unit,plus);
+    return st;
+  };
+  if(E.unit === "hm"){ box.appendChild(mk("h","小时",1,12)); box.appendChild(mk("m","分钟",5,59)); }
+  else { box.appendChild(mk("m","分钟",5,300)); }
+  return box;
+}
+function checkElapse(evt){
+  if(!E.q){ newElapseQuestion(); return; }
+  let ok, yours, right;
+  if(E.q.type === "end"){
+    ok = (norm(S.minutes) % 720) === (E.q.end % 720);
+    yours = fmt12(S.minutes); right = fmt12(E.q.end);
+  }else{
+    const given = E.unit === "hm" ? E.ans.h*60 + E.ans.m : E.ans.m;
+    ok = given === E.q.delta;
+    yours = E.unit==="hm" ? hmText(given) : given+"分钟";
+    right = E.unit==="hm" ? hmText(E.q.delta) : E.q.delta+"分钟";
+  }
+  const fb = $("#eFeedback");
+  E.done++;
+  if(ok){
+    E.right++; E.streak++;
+    fb.className = "feedback ok";
+    fb.innerHTML = "🎉 完全正确！" + (E.q.type==="end"
+      ? "<small>"+fmt12(E.q.start)+" 过了 "+deltaText(E.q.delta)+" 就是 "+right+"</small>"
+      : "<small>"+fmt12(E.q.start)+" 到 "+fmt12(E.q.end)+" 正好是 "+right+"（"+E.q.delta+"分钟）</small>");
+    sfx.good();
+    if(!E.hintUsed){
+      const r = evt && evt.target ? evt.target.getBoundingClientRect() : null;
+      addStar(r? r.left+r.width/2 : undefined, r? r.top : undefined);
+    }
+    setTimeout(newElapseQuestion, 1700);
+  }else{
+    E.streak = 0;
+    fb.className = "feedback bad";
+    fb.innerHTML = "再试一次！你的答案是 "+yours+
+      "<small>💡 小提示：先走整小时，再走分钟。1 小时 = 60 分钟</small>";
+    sfx.bad();
+  }
+  updateEProgress();
+}
+function elapseHint(){
+  if(!E.q) return;
+  E.hintUsed = true;
+  const q = E.q, fb = $("#eFeedback");
+  fb.className = "feedback";
+  if(q.type === "end"){
+    const h = Math.floor(q.delta/60), m = q.delta%60;
+    const mid = norm(q.start + h*60);
+    fb.innerHTML = h>0
+      ? "💡 先走 "+h+" 小时："+fmt12(q.start)+" ➜ "+fmt12(mid)+"；<br>再走 "+m+" 分钟，分针往前 "+m+" 小格。"
+      : "💡 分针从现在往前走 "+m+" 小格（每小格 1 分钟，大格 5 分钟）。";
+  }else{
+    const h = Math.floor(q.delta/60);
+    fb.innerHTML = "💡 先看整点：从 "+fmt12(q.start)+" 数到 "+fmt12(norm(q.start+h*60))+
+      " 是 "+h+" 小时；剩下的分针格子就是分钟。";
+  }
+  $("#eStreak").textContent = "本轮：" + E.done + " / 10　连对：" + E.streak + "（用了提示这题不计星⭐）";
+}
+function updateEProgress(){
+  if(E.done >= 10){
+    const r = E.right;
+    E.done = 0; E.right = 0;
+    $("#eBar").style.width = "0%";
+    $("#eStreak").textContent = "🏆 完成一轮！这轮答对 " + r + " / 10 题，新的一轮开始啦！";
+    return;
+  }
+  $("#eBar").style.width = (E.done/10*100) + "%";
+  $("#eStreak").textContent = "本轮：" + E.done + " / 10　答对：" + E.right + "　连对：" + E.streak;
+}
+$("#eNew").addEventListener("click", newElapseQuestion);
+$("#eCheck").addEventListener("click", checkElapse);
+$("#eHint").addEventListener("click", elapseHint);
+$("#qUnitSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  E.unit = b.dataset.qunit;
+  $$("#qUnitSeg button").forEach(x=> x.classList.toggle("on", x===b));
+  newElapseQuestion();
+});
+$("#qLevelSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  E.level = +b.dataset.level;
+  $$("#qLevelSeg button").forEach(x=> x.classList.toggle("on", x===b));
+  newElapseQuestion();
+});
+
+/* =====================================================================
+   10. 小时 ⇄ 分钟 换算挑战
+   ===================================================================== */
+const C = S.c;
+function newConvertQuestion(){
+  const lv = C.level;
+  let q;
+  const roll = Math.random();
+  if(lv===1 && roll < 0.3){
+    q = pick([
+      {text:"半小时 = ? 分钟", ans:[30], slots:["分钟"], tip:"半小时就是 1 小时的一半，60 ÷ 2"},
+      {text:"一刻钟 = ? 分钟", ans:[15], slots:["分钟"], tip:"钟面 4 个大格就是一刻钟"},
+      {text:"1 小时 = ? 分钟", ans:[60], slots:["分钟"], tip:"分针转一整圈"},
+      {text:"2 小时 = ? 分钟", ans:[120], slots:["分钟"], tip:"60 + 60"},
+      {text:"三刻钟 = ? 分钟", ans:[45], slots:["分钟"], tip:"15 + 15 + 15"}
+    ]);
+  }else if(roll < 0.65){
+    const h = lv===1 ? randInt(1,3) : (lv===2 ? randInt(1,5) : randInt(1,9));
+    const m = lv===1 ? pick([0,30]) : (lv===2 ? randInt(0,11)*5 : randInt(0,59));
+    q = { text: h+" 小时 "+(m? m+" 分":"")+" = ? 分钟", ans:[h*60+m], slots:["分钟"],
+          tip: h+" 小时 = "+h+" × 60 = "+(h*60)+" 分钟" + (m? "，再加上 "+m+" 分钟，一共 "+(h*60+m)+" 分钟" : "") };
+  }else{
+    const total = lv===1 ? pick([60,75,90,120,150,180])
+                : (lv===2 ? randInt(13,48)*5 : randInt(61,400));
+    q = { text: total+" 分钟 = ? 小时 ? 分钟", ans:[Math.floor(total/60), total%60], slots:["小时","分钟"],
+          tip: "看看 "+total+" 里面装得下几个 60：60 × "+Math.floor(total/60)+" = "+(Math.floor(total/60)*60)+
+               "，剩下的就是分钟" };
+  }
+  C.q = q;
+  C.slots = q.slots.map(()=> "");
+  C.active = 0;
+  C.hintUsed = false;
+  $("#cQuestion").innerHTML = q.text.replace(/\?/g, '<span class="q-num">?</span>');
+  $("#cFeedback").textContent = ""; $("#cFeedback").className = "feedback";
+  renderSlots();
+  updateCProgress();
+}
+function renderSlots(){
+  const box = $("#cAnswer"); box.innerHTML = "";
+  C.q.slots.forEach((unit,i)=>{
+    const s = document.createElement("div");
+    s.className = "slot" + (C.active===i? " active":"") + (C.slots[i]===""? " empty":"");
+    s.textContent = C.slots[i]===""? "?" : C.slots[i];
+    s.onclick = ()=>{ C.active = i; renderSlots(); };
+    box.appendChild(s);
+    const u = document.createElement("span"); u.textContent = unit; u.style.color = "var(--text-dim)";
+    box.appendChild(u);
+  });
+}
+function buildPad(){
+  const pad = $("#cPad"); pad.innerHTML = "";
+  ["1","2","3","4","5","6","7","8","9","0","⌫","➜ 下一格","清空"].forEach(k=>{
+    const b = document.createElement("button");
+    b.textContent = k;
+    if(k.length>1) b.style.fontSize = "14px";
+    b.onclick = ()=> padInput(k);
+    pad.appendChild(b);
+  });
+}
+function padInput(k){
+  if(!C.q) { newConvertQuestion(); return; }
+  if(k==="⌫"){ C.slots[C.active] = C.slots[C.active].slice(0,-1); }
+  else if(k==="清空"){ C.slots = C.slots.map(()=> ""); C.active = 0; }
+  else if(k==="➜ 下一格"){ C.active = (C.active+1) % C.slots.length; }
+  else if(C.slots[C.active].length < 3){ C.slots[C.active] += k; }
+  sfx.tick();
+  renderSlots();
+}
+function checkConvert(evt){
+  if(!C.q){ newConvertQuestion(); return; }
+  if(C.slots.some(v=> v==="")){
+    const fb = $("#cFeedback"); fb.className = "feedback bad"; fb.innerHTML = "先把空格填满哦！<small>如果没有剩余，就填 0</small>";
+    return;
+  }
+  const given = C.slots.map(v=> parseInt(v,10));
+  const ok = given.every((v,i)=> v === C.q.ans[i]);
+  const fb = $("#cFeedback");
+  C.done++;
+  if(ok){
+    C.right++; C.streak++;
+    fb.className = "feedback ok";
+    fb.innerHTML = "🎉 太棒了！<small>"+C.q.tip+"</small>";
+    sfx.good();
+    if(!C.hintUsed){
+      const r = evt && evt.target ? evt.target.getBoundingClientRect() : null;
+      addStar(r? r.left+r.width/2 : undefined, r? r.top : undefined);
+    }
+    setTimeout(newConvertQuestion, 1700);
+  }else{
+    C.streak = 0;
+    fb.className = "feedback bad";
+    fb.innerHTML = "差一点点，再算算！<small>💡 记住：1 小时 = 60 分钟</small>";
+    sfx.bad();
+  }
+  updateCProgress();
+}
+function convertHint(){
+  if(!C.q) return;
+  C.hintUsed = true;
+  const fb = $("#cFeedback");
+  fb.className = "feedback";
+  fb.innerHTML = "💡 " + C.q.tip;
+}
+function updateCProgress(){
+  if(C.done >= 10){
+    const r = C.right;
+    C.done = 0; C.right = 0;
+    $("#cBar").style.width = "0%";
+    $("#cStreak").textContent = "🏆 完成一轮！这轮答对 " + r + " / 10 题，新的一轮开始啦！";
+    return;
+  }
+  $("#cBar").style.width = (C.done/10*100) + "%";
+  $("#cStreak").textContent = "本轮：" + C.done + " / 10　答对：" + C.right + "　连对：" + C.streak;
+}
+$("#cNew").addEventListener("click", newConvertQuestion);
+$("#cCheck").addEventListener("click", checkConvert);
+$("#cHint").addEventListener("click", convertHint);
+$("#cLevelSeg").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  C.level = +b.dataset.clevel;
+  $$("#cLevelSeg button").forEach(x=> x.classList.toggle("on", x===b));
+  newConvertQuestion();
+});
+document.addEventListener("keydown", e=>{
+  if(S.mode !== "convert") return;
+  if(/^[0-9]$/.test(e.key)) padInput(e.key);
+  else if(e.key === "Backspace"){ padInput("⌫"); e.preventDefault(); }
+  else if(e.key === "Enter") checkConvert();
+  else if(e.key === "Tab"){ C.active = (C.active+1) % C.slots.length; renderSlots(); e.preventDefault(); }
+});
+
+/* =====================================================================
+   11. 模式切换 / 全局按钮
+   ===================================================================== */
+function setMode(mode){
+  S.mode = mode;
+  stopRun();
+  $$(".tab").forEach(t=> t.classList.toggle("active", t.dataset.mode===mode));
+  $("#panel-free").classList.toggle("hidden", mode!=="free");
+  $("#panel-elapse").classList.toggle("hidden", mode!=="elapse");
+  $("#panel-convert").classList.toggle("hidden", mode!=="convert");
+  if(mode==="elapse" && !E.q) newElapseQuestion();
+  if(mode==="convert" && !C.q) newConvertQuestion();
+}
+$$(".tab").forEach(t=> t.addEventListener("click", ()=>{ sfx.clunk(); setMode(t.dataset.mode); }));
+$("#soundBtn").addEventListener("click", ()=>{
+  S.sound = !S.sound;
+  $("#soundBtn").textContent = S.sound ? "🔊" : "🔇";
+  $("#soundBtn").classList.toggle("off", !S.sound);
+  save();
+  if(S.sound) sfx.clunk();
+});
+$("#helpBtn").addEventListener("click", ()=>{
+  $("#helpCard").classList.toggle("hidden");
+  sfx.clunk();
+});
+
+/* =====================================================================
+   12. 启动
+   ===================================================================== */
+function init(){
+  load();
+  buildDragon(); buildDial(); buildHands();
+  const d = new Date();
+  S.minutes = d.getHours()*60 + d.getMinutes();
+  S.exact = S.minutes; S.anchor = S.minutes;
+  $("#soundBtn").textContent = S.sound ? "🔊" : "🔇";
+  $("#soundBtn").classList.toggle("off", !S.sound);
+  renderFree(); buildPad(); renderRewards(); render(); setMode("free");
+  /* 首次点击时解锁音频（浏览器策略） */
+  const unlock = ()=>{ const c = ac(); if(c && c.state==="suspended") c.resume(); window.removeEventListener("pointerdown", unlock); };
+  window.addEventListener("pointerdown", unlock);
+}
+init();
+
+})();
+</script>
+</body>
+</html>
