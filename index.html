@@ -310,15 +310,6 @@ footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;li
             <button class="btn jade big" id="goFwd">▶ Move Forward</button>
             <button class="btn ghost" id="goBack">◀ Rewind</button>
           </div>
-          <div class="row">
-            <span class="label">Small steps:</span>
-            <button class="btn ghost sm" data-nudge="-60">−1 hr</button>
-            <button class="btn ghost sm" data-nudge="-5">−5 min</button>
-            <button class="btn ghost sm" data-nudge="-1">−1 min</button>
-            <button class="btn ghost sm" data-nudge="1">+1 min</button>
-            <button class="btn ghost sm" data-nudge="5">+5 min</button>
-            <button class="btn ghost sm" data-nudge="60">+1 hr</button>
-          </div>
         </div>
 
         <div class="card">
@@ -331,14 +322,6 @@ footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;li
             <button class="btn sm" id="setAnchor">📍 Start here</button>
             <button class="btn ghost sm" id="randTime">🎲 Random time</button>
             <button class="btn ghost sm" id="nowTime">🕐 Time now</button>
-          </div>
-          <div class="row">
-            <span class="label">Hands snap to:</span>
-            <div class="seg" id="snapSeg">
-              <button data-snap="1" class="on">1 min</button>
-              <button data-snap="5">5 min</button>
-              <button data-snap="15">15 min</button>
-            </div>
             <button class="btn ghost sm" id="runBtn">⏱ Auto run</button>
           </div>
         </div>
@@ -473,7 +456,7 @@ const S = {
   exact: 9*60,        // float minutes (may run outside 0-1440; wrapped when drawn)
   minutes: 9*60,      // snapped minutes
   anchor: 9*60,       // the "start here" time
-  snap: 1,
+  snap: 1,            // hands always move one minute at a time
   sound: true,
   running: false,
   mode: "free",
@@ -954,9 +937,6 @@ $$("#minInputs [data-quick]").forEach(b=>{
 });
 $("#goFwd").addEventListener("click", ()=> travel(freeDelta()));
 $("#goBack").addEventListener("click", ()=> travel(-freeDelta()));
-$$("[data-nudge]").forEach(b=> b.addEventListener("click", ()=>{
-  stopRun(); S.minutes = norm(S.minutes + (+b.dataset.nudge)); S.exact = S.minutes; sfx.tick(); render();
-}));
 $("#setAnchor").addEventListener("click", ()=>{ S.anchor = norm(S.minutes); sfx.clunk(); render(); });
 $("#randTime").addEventListener("click", ()=>{
   stopRun();
@@ -968,12 +948,6 @@ $("#nowTime").addEventListener("click", ()=>{
   const d = new Date();
   S.minutes = d.getHours()*60 + d.getMinutes();
   S.exact = S.minutes; S.anchor = S.minutes; sfx.clunk(); render();
-});
-$("#snapSeg").addEventListener("click", e=>{
-  const b = e.target.closest("button"); if(!b) return;
-  S.snap = +b.dataset.snap;
-  $$("#snapSeg button").forEach(x=> x.classList.toggle("on", x===b));
-  S.minutes = Math.round(S.minutes/S.snap)*S.snap; S.exact = S.minutes; render();
 });
 $("#runBtn").addEventListener("click", toggleRun);
 
