@@ -1,28 +1,28 @@
-# 🐉 龙之钟塔 · Dragon Clock
+# 🐉 Dragon Clock Tower
 
-给 8 岁小朋友的「学看钟表」网页小游戏，龙主题、中文界面。
-**单文件，双击 `index.html` 就能玩**（电脑 / 平板 / 手机浏览器都可以，不需要联网，不需要安装）。
+A dragon-themed "learn to tell the time" web game for an 8-year-old.
+**One single file — just double-click `index.html`** (works on a computer, tablet or phone; no internet, no install).
 
-## 功能
+## What's in it
 
-| 功能 | 说明 |
+| Feature | Details |
 | --- | --- |
-| 🐲 龙纹表盘 | 龙头、龙翼、龙爪、龙鳞外圈；金色分针 + 玉色时针；分钟数字（5、10…60）印在盘面上，帮助数格子 |
-| 🔢 数字表 | 同时显示 12 小时制、24 小时制 和中文读法（如「下午三点一刻」） |
-| ✋ 拖拽指针 | 手指或鼠标拖动指针，**分针转一圈时针自动走 1 小时**，和真钟表的齿轮一样；可选 1 分 / 5 分 / 15 分对齐 |
-| ⏩ 时间流逝 | 输入「小时 + 分钟」或「只用分钟」，按 ▶ 让指针自己走过去；也有 ±1分 / ±5分 / ±1时 小步按钮和自动走表 |
-| 📏 经过了多久 | 设一个起点，拖完指针就能看到「经过了 1 小时 25 分 = 85 分钟」 |
-| ⏳ 时间流逝挑战 | 两类题：①「现在 3:20，再过 1 小时 25 分是几点？」→ 拖指针作答；②「从 3:20 到 4:45 经过了多久？」→ 按钮作答。可选「小时+分钟」或「只用分钟」，三档难度 |
-| 🔄 时分换算 | 「2 小时 30 分 = ? 分钟」「150 分钟 = ? 小时 ? 分钟」「一刻钟 = ? 分钟」，数字键盘作答，三档难度 |
-| ⭐ 奖励 | 每答对一题得一颗星（用了提示不计星），每 5 颗星孵出一条小龙，龙伙伴和星星会保存在本地 |
-| 💡 提示 | 每题都有讲方法的提示：先走整小时，再走分钟；1 小时 = 60 分钟 |
-| 🔊 音效 | 走针的滴答、答对的乐句、孵龙的龙吼（右上角可静音） |
+| 🐲 Dragon clock face | Dragon head, wings, claws, tail and a scaled bezel drawn in SVG; long **gold minute hand**, short **jade hour hand**, and minute numerals (5, 10 … 60) printed on the dial for counting |
+| 🔢 Digital clock | 12-hour time, 24-hour time and the time in words ("Quarter past three in the afternoon") all at once |
+| ✋ Draggable hands | Drag with finger or mouse. A **full turn of the minute hand moves the hour hand on by exactly 1 hour**, like real clock gears. Hands can snap to 1, 5 or 15 minutes |
+| ⏩ Let time pass | Choose **hours + minutes** or **minutes only**, press ▶ and watch the hands sweep to the new time; plus ±1 min / ±5 min / ±1 hr steps and an auto-running clock |
+| 📏 Time passed | Set a start point, move the hands, and see "Time passed: 1 hour 25 minutes = 85 minutes" |
+| ⏳ Time Passing Challenge | Two question types: (1) "It is 3:20 now. What time will it be in 1 hour 25 minutes?" — answered by **dragging the hands**; (2) "From 3:20 to 4:45 — how much time has passed?" — answered with steppers. Hours+minutes or minutes-only, three levels |
+| 🔄 Hours ⇄ Minutes | "2 hours 30 min = ? minutes", "150 minutes = ? hours ? minutes", "a quarter of an hour = ? minutes", answered on a number pad. Three levels |
+| ⭐ Rewards | A star for every correct answer (no star if the hint was used); every 5 stars hatches a baby dragon. Stars and dragons are saved in the browser |
+| 💡 Hints | Every question has a method hint: count the whole hours first, then the minutes. 1 hour = 60 minutes |
+| 🔊 Sound | Ticking hands, a happy tune for correct answers, a dragon roar when an egg hatches (mute button top right) |
 
-## 怎么玩
+## How to play
 
-1. 打开 `index.html`。
-2. **自由玩钟**：拖指针、按「时间前进」，看数字表和中文读法怎么跟着变。
-3. **时间流逝**：点「出题」，按题目把大钟拨到正确时间，再点「检查答案」。
-4. **时分换算**：用数字键盘填空，两个空格之间用「➜ 下一格」切换。
+1. Open `index.html`.
+2. **Free Play** — drag the hands, press "Move Forward", and watch the digital clock and the words change with them.
+3. **Time Passing** — press "New question", set the big clock to the right time, then press "Check answer".
+4. **Hours ⇄ Minutes** — type into the boxes with the number pad; "➜ Next" moves to the second box.
 
-小提示：先玩「简单」难度（整点、半点、一刻钟），熟练后再上「进阶」（5 分钟一格）和「挑战」（任意分钟）。
+Tip: start on **Easy** (o'clock, half past, quarter past), then move up to **Medium** (5-minute steps) and **Tricky** (any minute).
