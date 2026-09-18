@@ -255,6 +255,8 @@ input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-
 .hatch p{margin:0 0 16px;color:var(--text-dim);font-size:14px;line-height:1.7}
 .sparkle{position:fixed;pointer-events:none;z-index:60;font-size:22px;animation:spark .9s ease-out forwards}
 @keyframes spark{0%{transform:translate(0,0) scale(.5);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.35);opacity:0}}
+.dragon-lid{transform-box:fill-box;transform-origin:50% 44%;animation:dblink 5.5s ease-in-out infinite}
+@keyframes dblink{0%,92%,100%{transform:scaleY(0)}94.5%,96.5%{transform:scaleY(1)}}
 .flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .7s ease-in-out infinite alternate}
 @keyframes flick{from{transform:scaleY(.8) scaleX(1.05)}to{transform:scaleY(1.2) scaleX(.9)}}
 .hidden{display:none!important}
@@ -650,34 +652,42 @@ function buildDragon(){
   /* neck */
   el("path",{d:"M -46 -150 C -52 -200 -40 -232 0 -240 C 40 -232 52 -200 46 -150 Z",
              fill:"#2aa87a", stroke:"#0f7a55", "stroke-width":"3"},g);
-  const h = el("g",{transform:"translate(0,-252)", filter:"url(#softShadow)"},g);
-  /* horns */
+  const h = el("g",{transform:"translate(0,-244)", filter:"url(#softShadow)"},g);
+  /* stubby rounded horns with a soft tip */
+  [1,-1].forEach(sx=>{
+    const horn = el("g",{transform:"scale("+sx+",1)"},h);
+    el("path",{d:"M -20 -42 C -34 -52 -44 -66 -38 -80 C -22 -74 -10 -60 -6 -46 Z",
+      fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"2.5", "stroke-linejoin":"round"},horn);
+    el("circle",{cx:-38, cy:-80, r:6, fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"2.5"},horn);
+  });
+  /* soft ear fins */
   [1,-1].forEach(sx=>{
     el("path",{transform:"scale("+sx+",1)",
-      d:"M -24 -40 C -40 -60 -54 -88 -52 -116 C -30 -98 -14 -70 -8 -48 C -14 -46 -20 -44 -24 -40 Z",
-      fill:"url(#goldGrad)", stroke:"#a8710f", "stroke-width":"2.5", "stroke-linejoin":"round"},h);
+      d:"M -50 -12 C -72 -20 -90 -14 -94 2 C -80 4 -70 12 -64 24 C -56 10 -52 0 -50 -12 Z",
+      fill:"#43c191", stroke:"#0f7a55", "stroke-width":"2.5", "stroke-linejoin":"round"},h);
   });
-  /* side fins */
+  /* round, chubby face */
+  el("path",{d:"M 0 -56 C 36 -56 64 -32 64 2 C 64 34 38 56 0 56 C -38 56 -64 34 -64 2 C -64 -32 -36 -56 0 -56 Z",
+             fill:"url(#jadeGrad)", stroke:"#0f7a55", "stroke-width":"3.5"},h);
+  /* muzzle */
+  el("ellipse",{cx:0, cy:24, rx:32, ry:22, fill:"#b6ffe4", opacity:".8"},h);
+  /* big friendly eyes */
   [1,-1].forEach(sx=>{
-    el("path",{transform:"scale("+sx+",1)",
-      d:"M -44 -12 C -66 -22 -86 -20 -96 -8 C -82 -2 -70 8 -62 20 C -54 6 -48 -4 -44 -12 Z",
-      fill:"#2aa87a", stroke:"#0f7a55", "stroke-width":"2.5"},h);
+    el("ellipse",{cx:sx*26, cy:-8, rx:16, ry:17, fill:"#fffdf2"},h);
+    el("circle",{cx:sx*26, cy:-5, r:9.5, fill:"#241141"},h);
+    el("circle",{cx:sx*26-4, cy:-10, r:4.2, fill:"#fff"},h);
+    el("circle",{cx:sx*26+4.5, cy:0.5, r:2.1, fill:"#fff", opacity:".85"},h);
   });
-  /* head */
-  el("path",{d:"M -58 8 C -66 -24 -46 -52 -16 -60 C -4 -63 4 -63 16 -60 C 46 -52 66 -24 58 8 "+
-               "C 52 34 28 50 0 50 C -28 50 -52 34 -58 8 Z",
-             fill:"url(#jadeGrad)", stroke:"#0f7a55", "stroke-width":"3"},h);
-  /* snout */
-  el("path",{d:"M -30 18 C -30 38 -16 50 0 50 C 16 50 30 38 30 18 C 20 26 -20 26 -30 18 Z",
-             fill:"#8ff7d0", opacity:".85"},h);
-  /* eyes */
-  [1,-1].forEach(sx=>{
-    el("ellipse",{cx:sx*24, cy:-8, rx:12, ry:13, fill:"#fff6d8"},h);
-    el("ellipse",{cx:sx*24, cy:-8, rx:4.5, ry:11, fill:"#1b0d38"},h);
-    el("circle",{cx:sx*24-3, cy:-13, r:2.6, fill:"#fff"},h);
-  });
-  /* nostrils */
-  [1,-1].forEach(sx=> el("ellipse",{cx:sx*9, cy:26, rx:4, ry:3, fill:"#0f7a55"},h));
+  [1,-1].forEach(sx=> el("ellipse",{cx:sx*26, cy:-8, rx:16.5, ry:17.5, fill:"#3fd6a0",
+                                    stroke:"#0f7a55", "stroke-width":"1.5", class:"dragon-lid"},h));
+  /* blush */
+  [1,-1].forEach(sx=> el("ellipse",{cx:sx*46, cy:18, rx:12, ry:7.5, fill:"#ff85b3", opacity:".45"},h));
+  /* nostrils + smile + a little tooth */
+  [1,-1].forEach(sx=> el("ellipse",{cx:sx*8, cy:15, rx:3.6, ry:2.6, fill:"#0f7a55"},h));
+  el("path",{d:"M -15 28 Q 0 42 15 28", fill:"none", stroke:"#0f7a55", "stroke-width":"4",
+             "stroke-linecap":"round"},h);
+  el("path",{d:"M 6 33 L 13 31 L 9 39 Z", fill:"#fffdf2", stroke:"#0f7a55", "stroke-width":"1.5",
+             "stroke-linejoin":"round"},h);
   /* little flame */
   const fl = el("g",{transform:"translate(96,14) rotate(34) scale(1.15)"},h);
   el("path",{d:"M 0 26 C -14 12 -10 -2 0 -16 C 10 -2 14 12 0 26 Z", fill:"url(#emberGrad)",
@@ -1108,21 +1118,32 @@ function babyDragon(d, idPrefix, animated){
      fill="url(#${gid})" stroke="${dark}" stroke-width="3.5"/>
   <path d="M 0 12 C 16 12 27 24 27 38 C 27 52 15 58 0 58 C -15 58 -27 52 -27 38 C -27 24 -16 12 0 12 Z"
      fill="${d.belly}" opacity=".95"/>
-  <path d="M -18 -46 C -26 -64 -38 -76 -52 -80 C -46 -64 -40 -52 -34 -40 Z"
+  <path d="M -34 -26 C -52 -33 -66 -27 -69 -14 C -57 -12 -49 -5 -44 5 C -38 -7 -35 -17 -34 -26 Z"
+     fill="${mid}" stroke="${dark}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M 34 -26 C 52 -33 66 -27 69 -14 C 57 -12 49 -5 44 5 C 38 -7 35 -17 34 -26 Z"
+     fill="${mid}" stroke="${dark}" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M -15 -50 C -27 -58 -37 -70 -32 -82 C -18 -76 -8 -64 -5 -52 Z"
      fill="url(#${gold})" stroke="#a8710f" stroke-width="2.5" stroke-linejoin="round"/>
-  <path d="M 18 -46 C 26 -64 38 -76 52 -80 C 46 -64 40 -52 34 -40 Z"
+  <circle cx="-32" cy="-82" r="5.5" fill="url(#${gold})" stroke="#a8710f" stroke-width="2.5"/>
+  <path d="M 15 -50 C 27 -58 37 -70 32 -82 C 18 -76 8 -64 5 -52 Z"
      fill="url(#${gold})" stroke="#a8710f" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="32" cy="-82" r="5.5" fill="url(#${gold})" stroke="#a8710f" stroke-width="2.5"/>
   <ellipse cx="0" cy="-26" rx="40" ry="36" fill="url(#${gid})" stroke="${dark}" stroke-width="3.5"/>
   <ellipse cx="0" cy="-12" rx="22" ry="15" fill="${d.belly}" opacity=".75"/>
-  <ellipse cx="-15" cy="-30" rx="11" ry="12" fill="#fff8e6"/>
-  <ellipse cx="15" cy="-30" rx="11" ry="12" fill="#fff8e6"/>
-  <ellipse cx="-14" cy="-28" rx="5" ry="8.5" fill="#22123f"/>
-  <ellipse cx="14" cy="-28" rx="5" ry="8.5" fill="#22123f"/>
-  <circle cx="-17" cy="-33" r="2.8" fill="#fff"/><circle cx="11" cy="-33" r="2.8" fill="#fff"/>
-  ${animated ? `<ellipse class="hs-lid" cx="-15" cy="-30" rx="11.4" ry="12.4" fill="${mid}"/>
-  <ellipse class="hs-lid" cx="15" cy="-30" rx="11.4" ry="12.4" fill="${mid}"/>` : ``}
+  <ellipse cx="-15" cy="-30" rx="12.5" ry="13.5" fill="#fffdf2"/>
+  <ellipse cx="15" cy="-30" rx="12.5" ry="13.5" fill="#fffdf2"/>
+  <circle cx="-14.5" cy="-28" r="7.6" fill="#241141"/>
+  <circle cx="14.5" cy="-28" r="7.6" fill="#241141"/>
+  <circle cx="-17.5" cy="-32" r="3.4" fill="#fff"/><circle cx="11.5" cy="-32" r="3.4" fill="#fff"/>
+  <circle cx="-11.5" cy="-24" r="1.8" fill="#fff" opacity=".85"/>
+  <circle cx="17.5" cy="-24" r="1.8" fill="#fff" opacity=".85"/>
+  <ellipse cx="-30" cy="-13" rx="9" ry="5.5" fill="#ff85b3" opacity=".45"/>
+  <ellipse cx="30" cy="-13" rx="9" ry="5.5" fill="#ff85b3" opacity=".45"/>
+  ${animated ? `<ellipse class="hs-lid" cx="-15" cy="-30" rx="12.9" ry="13.9" fill="${mid}"/>
+  <ellipse class="hs-lid" cx="15" cy="-30" rx="12.9" ry="13.9" fill="${mid}"/>` : ``}
   <ellipse cx="-6" cy="-12" rx="2.6" ry="2" fill="${dark}"/><ellipse cx="6" cy="-12" rx="2.6" ry="2" fill="${dark}"/>
   <path d="M -11 -5 Q 0 5 11 -5" fill="none" stroke="${dark}" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 3 0.6 L 9 -1 L 5.5 5.5 Z" fill="#fffdf2" stroke="${dark}" stroke-width="1.3" stroke-linejoin="round"/>
   <ellipse cx="-20" cy="58" rx="13" ry="8" fill="${mid}" stroke="${dark}" stroke-width="3"/>
   <ellipse cx="20" cy="58" rx="13" ry="8" fill="${mid}" stroke="${dark}" stroke-width="3"/>`;
 }
