@@ -132,6 +132,12 @@ h1 small{display:block;font-size:12px;letter-spacing:1px;color:var(--text-dim);
 .stepper button{width:34px;height:34px;border-radius:10px;border:none;cursor:pointer;font-size:20px;font-weight:800;
   font-family:inherit;color:#2a1400;background:linear-gradient(180deg,#ffe49a,#ffc043);line-height:1}
 .stepper .val{min-width:46px;text-align:center;font-size:20px;font-weight:800;color:var(--text)}
+input.val{width:62px;background:rgba(0,0,0,.34);border:1.5px solid rgba(255,206,92,.4);border-radius:10px;
+  padding:6px 2px;font-family:inherit;color:var(--gold);font-size:20px;font-weight:800;text-align:center}
+input.val:focus{outline:none;border-color:var(--gold);background:rgba(255,206,92,.16);
+  box-shadow:0 0 0 3px rgba(255,206,92,.18)}
+input[type=number]{-moz-appearance:textfield}
+input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .stepper .unit{font-size:13px;color:var(--text-dim);font-weight:700}
 
 /* elapsed readout */
@@ -155,14 +161,16 @@ h1 small{display:block;font-size:12px;letter-spacing:1px;color:var(--text-dim);
 .feedback.bad{color:var(--bad)}
 .feedback small{display:block;font-weight:600;font-size:13px;color:var(--text-dim);margin-top:3px}
 .answer-box{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;font-size:19px;font-weight:800}
-.slot{min-width:74px;height:56px;border-radius:14px;border:2.5px solid rgba(255,206,92,.5);
-  background:rgba(0,0,0,.3);display:grid;place-items:center;font-size:26px;font-weight:800;color:var(--gold);cursor:pointer;transition:.15s}
-.slot.active{border-color:var(--gold);background:rgba(255,206,92,.16);box-shadow:0 0 0 4px rgba(255,206,92,.16)}
-.slot.empty{color:rgba(255,255,255,.22)}
-.pad{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:11px}
-.pad button{padding:13px 0;border-radius:13px;border:1.5px solid var(--panel-line);background:rgba(255,255,255,.08);
-  color:var(--text);font-size:19px;font-weight:800;font-family:inherit;cursor:pointer;transition:.12s}
-.pad button:active{transform:translateY(2px);background:rgba(255,206,92,.24)}
+.slot{width:92px;height:58px;border-radius:14px;border:2.5px solid rgba(255,206,92,.5);
+  background:rgba(0,0,0,.3);font-size:26px;font-weight:800;color:var(--gold);text-align:center;
+  font-family:inherit;transition:.15s}
+.slot:focus{outline:none;border-color:var(--gold);background:rgba(255,206,92,.16);box-shadow:0 0 0 4px rgba(255,206,92,.16)}
+.slot::placeholder{color:rgba(255,255,255,.22)}
+.ampm-seg{display:inline-flex;background:rgba(0,0,0,.3);border:1.5px solid var(--panel-line);border-radius:12px;padding:3px;gap:3px}
+.ampm-seg button{border:none;background:transparent;color:var(--text-dim);font-family:inherit;font-weight:800;
+  font-size:15px;padding:7px 12px;border-radius:9px;cursor:pointer}
+.ampm-seg button.on{background:linear-gradient(180deg,#ffe49a,#ffc043);color:#2a1400}
+.tip-line{font-size:13px;color:var(--text-dim);text-align:center;margin-top:7px}
 .progress{height:12px;border-radius:999px;background:rgba(0,0,0,.32);overflow:hidden;border:1px solid var(--panel-line)}
 .progress i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#ffce5c,#ff7a3d);transition:width .4s}
 .streak{font-size:13px;color:var(--text-dim);font-weight:700;text-align:center;margin-top:6px}
@@ -296,11 +304,11 @@ footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;li
             </div>
           </div>
           <div class="row" id="hmInputs">
-            <div class="stepper"><button data-step="h-1">−</button><span class="val" id="valH">1</span><span class="unit">hr</span><button data-step="h+1">＋</button></div>
-            <div class="stepper"><button data-step="m-5">−</button><span class="val" id="valM">30</span><span class="unit">min</span><button data-step="m+5">＋</button></div>
+            <div class="stepper"><button data-step="h-1">−</button><input class="val" id="valH" type="number" inputmode="numeric" min="0" max="11" value="1"><span class="unit">hr</span><button data-step="h+1">＋</button></div>
+            <div class="stepper"><button data-step="m-5">−</button><input class="val" id="valM" type="number" inputmode="numeric" min="0" max="59" value="30"><span class="unit">min</span><button data-step="m+5">＋</button></div>
           </div>
           <div class="row hidden" id="minInputs">
-            <div class="stepper"><button data-step="t-5">−</button><span class="val" id="valT">45</span><span class="unit">min</span><button data-step="t+5">＋</button></div>
+            <div class="stepper"><button data-step="t-5">−</button><input class="val" id="valT" type="number" inputmode="numeric" min="1" max="300" value="45"><span class="unit">min</span><button data-step="t+5">＋</button></div>
             <button class="btn ghost sm" data-quick="15">15 min</button>
             <button class="btn ghost sm" data-quick="30">30 min</button>
             <button class="btn ghost sm" data-quick="60">60 min</button>
@@ -374,7 +382,7 @@ footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;li
           </div>
           <div class="question" id="cQuestion">Press “New question” to start</div>
           <div class="answer-box" id="cAnswer"></div>
-          <div class="pad" id="cPad"></div>
+          <div class="tip-line">Type the numbers, then press Enter</div>
           <div class="feedback" id="cFeedback"></div>
           <div class="row" style="justify-content:center">
             <button class="btn jade big" id="cCheck">✅ Check answer</button>
@@ -401,8 +409,9 @@ footer{text-align:center;color:var(--text-dim);font-size:12px;margin-top:22px;li
         <h2>📖 How to Play</h2>
         <ul class="muted help">
           <li><b>Drag the hands</b>: grab the long <b>gold minute hand</b> or the short <b>jade hour hand</b>. When the minute hand goes all the way round, the hour hand moves on by 1 hour — just like a real clock.</li>
-          <li><b>Digital clock</b>: under the dial you get the 12-hour time, the 24-hour time and the time in words.</li>
-          <li><b>Let time pass</b>: choose “hours + minutes” or “minutes only”, then press ▶ and watch the hands travel.</li>
+          <li><b>Digital clock</b>: under the dial you get the 12-hour time with AM/PM, the 24-hour time and the time in words.</li>
+          <li><b>Answering</b>: in the challenges you can drag the hands <i>or</i> type the answer in the boxes (don't forget AM or PM), then press Enter.</li>
+          <li><b>Let time pass</b>: choose “hours + minutes” or “minutes only”, type a number or use − / ＋, then press ▶ and watch the hands travel.</li>
           <li><b>Remember</b>: <b>1 hour = 60 minutes</b> · half an hour = 30 minutes · a quarter of an hour = 15 minutes.</li>
           <li><b>Rewards</b>: every correct answer earns a ⭐, and every 5 stars hatches a baby dragon 🐲.</li>
         </ul>
@@ -465,7 +474,7 @@ const S = {
   /* time-passing challenge */
   e: { unit:"hm", level:1, q:null, done:0, right:0, streak:0, hintUsed:false, ans:{h:0,m:0} },
   /* conversion challenge */
-  c: { level:1, q:null, done:0, right:0, streak:0, slots:[""], active:0 }
+  c: { level:1, q:null, done:0, right:0, streak:0, slots:[""], inputs:[] }
 };
 
 function save(){
@@ -744,12 +753,18 @@ function render(){
 
   /* free play: elapsed time readout */
   const diff = norm(m - S.anchor);
-  $("#anchorChip").textContent = fmt12(S.anchor);
-  $("#nowChip").textContent = fmt12(m);
+  $("#anchorChip").textContent = fmt12ap(S.anchor);
+  $("#nowChip").textContent = fmt12ap(m);
   $("#elapsedHM").textContent = hmText(diff);
   $("#elapsedMin").textContent = diff + (diff===1 ? " minute" : " minutes");
 
   if(m !== lastShownMinute){ lastShownMinute = m; }
+  syncTimeInput();
+}
+function fmt12ap(mins){
+  const m = norm(mins), h24 = Math.floor(m/60);
+  const h12 = (h24%12)===0 ? 12 : h24%12;
+  return h12 + ":" + pad2(m%60) + " " + (h24 < 12 ? "AM" : "PM");
 }
 function fmt12(mins){
   const m = norm(mins), h24 = Math.floor(m/60);
@@ -784,7 +799,7 @@ function miniClock(mins, label){
   el("circle",{cx:0,cy:0,r:8, fill:"#1b0d38", stroke:"#ffce5c","stroke-width":"3"},svg);
   wrap.appendChild(svg);
   const cap = document.createElement("span");
-  cap.textContent = label + " · " + fmt12(m);
+  cap.textContent = label + " · " + fmt12ap(m);
   wrap.appendChild(cap);
   return wrap;
 }
@@ -906,9 +921,9 @@ function toggleRun(){
    ===================================================================== */
 const free = { unit:"hm", h:1, m:30, t:45 };
 function renderFree(){
-  $("#valH").textContent = free.h;
-  $("#valM").textContent = free.m;
-  $("#valT").textContent = free.t;
+  if(document.activeElement !== $("#valH")) $("#valH").value = free.h;
+  if(document.activeElement !== $("#valM")) $("#valM").value = free.m;
+  if(document.activeElement !== $("#valT")) $("#valT").value = free.t;
   $("#hmInputs").classList.toggle("hidden", free.unit!=="hm");
   $("#minInputs").classList.toggle("hidden", free.unit!=="min");
 }
@@ -931,6 +946,16 @@ $$("#hmInputs .stepper button, #minInputs .stepper button").forEach(b=>{
     if(s==="t-5") free.t = clamp(free.t-5,5,300);
     sfx.tick(); renderFree();
   });
+});
+/* typing straight into the boxes */
+[["#valH","h",0,11],["#valM","m",0,59],["#valT","t",1,300]].forEach(([sel,key,lo,hi])=>{
+  const inp = $(sel);
+  inp.addEventListener("input", ()=>{
+    const v = parseInt(inp.value,10);
+    if(!isNaN(v)) free[key] = clamp(v,lo,hi);
+  });
+  inp.addEventListener("blur", ()=>{ renderFree(); });
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter"){ inp.blur(); $("#goFwd").click(); } });
 });
 $$("#minInputs [data-quick]").forEach(b=>{
   b.addEventListener("click", ()=>{ free.t = +b.dataset.quick; sfx.tick(); renderFree(); });
@@ -1025,10 +1050,10 @@ function sparkle(x,y){
    ===================================================================== */
 const E = S.e;
 function genStart(level){
-  const h = randInt(1,12)%12;
-  if(level===1) return h*60 + pick([0,15,30,45]);
-  if(level===2) return h*60 + randInt(0,11)*5;
-  return h*60 + randInt(0,59);
+  /* real times of day, so AM / PM means something */
+  if(level===1) return randInt(8,19)*60 + pick([0,15,30,45]);
+  if(level===2) return randInt(7,21)*60 + randInt(0,11)*5;
+  return randInt(0,23)*60 + randInt(0,59);
 }
 function genDelta(level, unit){
   if(unit==="min"){
@@ -1049,15 +1074,16 @@ function newElapseQuestion(){
   E.q = { type, start, delta, end: norm(start+delta) };
   E.hintUsed = false;
   E.ans = { h:0, m:0 };
+  E.fields = null;
 
   const qa = $("#eAnswerArea"); qa.innerHTML = "";
   const mini = $("#eMini"); mini.innerHTML = "";
 
   if(type === "end"){
     S.minutes = start; S.exact = start; S.anchor = start; render();
-    $("#eQuestion").innerHTML = 'It is <span class="q-num">'+fmt12(start)+'</span> now. '+
+    $("#eQuestion").innerHTML = 'It is <span class="q-num">'+fmt12ap(start)+'</span> now. '+
       'What time will it be in <span class="q-num">'+deltaText(delta)+'</span>?<br>' +
-      '<span style="font-size:15px;color:var(--text-dim)">Drag the hands on the big clock to the right time 👉</span>';
+      '<span style="font-size:15px;color:var(--text-dim)">Drag the hands on the big clock, or type your answer below</span>';
     mini.appendChild(miniClock(start,"Start"));
     const arrow = document.createElement("div");
     arrow.className = "arrow"; arrow.innerHTML = "➜ "+shortDur(delta)+" ➜";
@@ -1065,9 +1091,10 @@ function newElapseQuestion(){
     const q = document.createElement("div");
     q.className = "mini"; q.innerHTML = '<div style="font-size:64px">❓</div><span>you set it</span>';
     mini.appendChild(q);
+    qa.appendChild(buildTimeInput());
   }else{
-    $("#eQuestion").innerHTML = 'From <span class="q-num">'+fmt12(start)+'</span> to '+
-      '<span class="q-num">'+fmt12(E.q.end)+'</span> — how much time has passed?';
+    $("#eQuestion").innerHTML = 'From <span class="q-num">'+fmt12ap(start)+'</span> to '+
+      '<span class="q-num">'+fmt12ap(E.q.end)+'</span> — how much time has passed?';
     mini.appendChild(miniClock(start,"Start"));
     const arrow = document.createElement("div"); arrow.className="arrow"; arrow.textContent = "➜ ❓ ➜";
     mini.appendChild(arrow);
@@ -1076,6 +1103,55 @@ function newElapseQuestion(){
   }
   $("#eFeedback").textContent = ""; $("#eFeedback").className = "feedback";
   updateEProgress();
+}
+function buildTimeInput(){
+  const box = document.createElement("div");
+  box.className = "answer-box";
+  const lab = document.createElement("span");
+  lab.className = "label"; lab.textContent = "Your answer:";
+  const hh = document.createElement("input");
+  hh.className = "slot"; hh.type = "number"; hh.inputMode = "numeric";
+  hh.min = "1"; hh.max = "12"; hh.placeholder = "hh";
+  const colon = document.createElement("span"); colon.textContent = ":";
+  const mm = document.createElement("input");
+  mm.className = "slot"; mm.type = "number"; mm.inputMode = "numeric";
+  mm.min = "0"; mm.max = "59"; mm.placeholder = "mm";
+  const seg = document.createElement("div"); seg.className = "ampm-seg";
+  const am = document.createElement("button"); am.textContent = "AM";
+  const pm = document.createElement("button"); pm.textContent = "PM";
+  seg.append(am, pm);
+  box.append(lab, hh, colon, mm, seg);
+
+  E.fields = { hh, mm, am, pm };
+  const push = ()=>{                       /* typed answer -> the big clock */
+    let h = parseInt(hh.value,10), m = parseInt(mm.value,10);
+    if(isNaN(h) || isNaN(m)) return;
+    h = clamp(h,1,12); m = clamp(m,0,59);
+    const h24 = (h % 12) + (E.fields.pm.classList.contains("on") ? 12 : 0);
+    stopRun();
+    S.minutes = h24*60 + m; S.exact = S.minutes;
+    render();
+  };
+  [hh,mm].forEach(inp=>{
+    inp.addEventListener("input", push);
+    inp.addEventListener("keydown", e=>{
+      if(e.key === "Enter"){ e.preventDefault(); inp.blur(); checkElapse(e); }
+    });
+  });
+  am.onclick = ()=>{ am.classList.add("on"); pm.classList.remove("on"); sfx.tick(); push(); };
+  pm.onclick = ()=>{ pm.classList.add("on"); am.classList.remove("on"); sfx.tick(); push(); };
+  syncTimeInput();
+  return box;
+}
+function syncTimeInput(){                   /* the big clock -> typed answer */
+  if(!E.fields || S.mode !== "elapse" || !E.q || E.q.type !== "end") return;
+  const m = norm(S.minutes), h24 = Math.floor(m/60);
+  const h12 = (h24%12)===0 ? 12 : h24%12;
+  const f = E.fields;
+  if(document.activeElement !== f.hh) f.hh.value = h12;
+  if(document.activeElement !== f.mm) f.mm.value = pad2(m%60);
+  f.am.classList.toggle("on", h24 < 12);
+  f.pm.classList.toggle("on", h24 >= 12);
 }
 function shortDur(d){
   if(E.unit === "min") return "+" + d + " min";
@@ -1092,11 +1168,20 @@ function buildSpanInput(){
   const mk = (key,label,step,max)=>{
     const st = document.createElement("div"); st.className = "stepper";
     const minus = document.createElement("button"); minus.textContent = "−";
-    const val = document.createElement("span"); val.className="val"; val.textContent = E.ans[key];
+    const val = document.createElement("input"); val.className = "val";
+    val.type = "number"; val.inputMode = "numeric"; val.min = "0"; val.max = String(max);
+    val.value = E.ans[key];
     const unit = document.createElement("span"); unit.className="unit"; unit.textContent = label;
     const plus = document.createElement("button"); plus.textContent = "＋";
-    minus.onclick = ()=>{ E.ans[key] = clamp(E.ans[key]-step, 0, max); val.textContent = E.ans[key]; sfx.tick(); };
-    plus.onclick  = ()=>{ E.ans[key] = clamp(E.ans[key]+step, 0, max); val.textContent = E.ans[key]; sfx.tick(); };
+    const set = v =>{ E.ans[key] = clamp(v, 0, max); val.value = E.ans[key]; };
+    minus.onclick = ()=>{ set(E.ans[key]-step); sfx.tick(); };
+    plus.onclick  = ()=>{ set(E.ans[key]+step); sfx.tick(); };
+    val.addEventListener("input", ()=>{
+      const v = parseInt(val.value,10);
+      if(!isNaN(v)) E.ans[key] = clamp(v, 0, max);
+    });
+    val.addEventListener("blur", ()=>{ val.value = E.ans[key]; });
+    val.addEventListener("keydown", e=>{ if(e.key==="Enter"){ e.preventDefault(); val.blur(); checkElapse(e); } });
     st.append(minus,val,unit,plus);
     return st;
   };
@@ -1106,10 +1191,11 @@ function buildSpanInput(){
 }
 function checkElapse(evt){
   if(!E.q){ newElapseQuestion(); return; }
-  let ok, yours, right;
+  let ok, yours, right, handsRight = false;
   if(E.q.type === "end"){
-    ok = (norm(S.minutes) % 720) === (E.q.end % 720);
-    yours = fmt12(S.minutes); right = fmt12(E.q.end);
+    ok = norm(S.minutes) === E.q.end;
+    handsRight = !ok && (norm(S.minutes) % 720) === (E.q.end % 720);
+    yours = fmt12ap(S.minutes); right = fmt12ap(E.q.end);
   }else{
     const given = E.unit === "hm" ? E.ans.h*60 + E.ans.m : E.ans.m;
     ok = given === E.q.delta;
@@ -1122,8 +1208,8 @@ function checkElapse(evt){
     E.right++; E.streak++;
     fb.className = "feedback ok";
     fb.innerHTML = "🎉 That's exactly right!" + (E.q.type==="end"
-      ? "<small>"+fmt12(E.q.start)+" plus "+deltaText(E.q.delta)+" = "+right+"</small>"
-      : "<small>"+fmt12(E.q.start)+" to "+fmt12(E.q.end)+" is "+right+" ("+E.q.delta+" minutes)</small>");
+      ? "<small>"+fmt12ap(E.q.start)+" plus "+deltaText(E.q.delta)+" = "+right+"</small>"
+      : "<small>"+fmt12ap(E.q.start)+" to "+fmt12ap(E.q.end)+" is "+right+" ("+E.q.delta+" minutes)</small>");
     sfx.good();
     if(!E.hintUsed){
       const r = evt && evt.target ? evt.target.getBoundingClientRect() : null;
@@ -1133,8 +1219,11 @@ function checkElapse(evt){
   }else{
     E.streak = 0;
     fb.className = "feedback bad";
-    fb.innerHTML = "Not quite — try again! You said "+yours+
-      "<small>💡 Tip: count the whole hours first, then the minutes. 1 hour = 60 minutes</small>";
+    fb.innerHTML = handsRight
+      ? "So close! The hands are right, but is it AM or PM? You said "+yours+
+        "<small>💡 It was "+fmt12ap(E.q.start)+" and "+deltaText(E.q.delta)+" went by — did you cross 12 o'clock?</small>"
+      : "Not quite — try again! You said "+yours+
+        "<small>💡 Tip: count the whole hours first, then the minutes. 1 hour = 60 minutes</small>";
     sfx.bad();
   }
   updateEProgress();
@@ -1148,12 +1237,12 @@ function elapseHint(){
     const h = Math.floor(q.delta/60), m = q.delta%60;
     const mid = norm(q.start + h*60);
     fb.innerHTML = h>0
-      ? "💡 Jump the whole hours first: "+fmt12(q.start)+" ➜ "+fmt12(mid)+" is "+h+" hour"+(h===1?"":"s")+
+      ? "💡 Jump the whole hours first: "+fmt12ap(q.start)+" ➜ "+fmt12ap(mid)+" is "+h+" hour"+(h===1?"":"s")+
         ".<br>Then move the minute hand on "+m+" little marks."
       : "💡 Move the minute hand forward "+m+" little marks (1 mark = 1 minute, 1 big mark = 5 minutes).";
   }else{
     const h = Math.floor(q.delta/60);
-    fb.innerHTML = "💡 Count the whole hours first: "+fmt12(q.start)+" to "+fmt12(norm(q.start+h*60))+
+    fb.innerHTML = "💡 Count the whole hours first: "+fmt12ap(q.start)+" to "+fmt12ap(norm(q.start+h*60))+
       " is "+h+" hour"+(h===1?"":"s")+". The minute marks that are left over are the minutes.";
   }
   $("#eStreak").textContent = "This round: " + E.done + " / 10 · Streak: " + E.streak + " (hint used — no ⭐ for this one)";
@@ -1215,43 +1304,36 @@ function newConvertQuestion(){
   }
   C.q = q;
   C.slots = q.slots.map(()=> "");
-  C.active = 0;
   C.hintUsed = false;
   $("#cQuestion").innerHTML = q.text.replace(/\?/g, '<span class="q-num">?</span>');
   $("#cFeedback").textContent = ""; $("#cFeedback").className = "feedback";
   renderSlots();
+  if(C.inputs[0] && S.mode === "convert") C.inputs[0].focus();
   updateCProgress();
 }
 function renderSlots(){
   const box = $("#cAnswer"); box.innerHTML = "";
+  C.inputs = [];
   C.q.slots.forEach((unit,i)=>{
-    const s = document.createElement("div");
-    s.className = "slot" + (C.active===i? " active":"") + (C.slots[i]===""? " empty":"");
-    s.textContent = C.slots[i]===""? "?" : C.slots[i];
-    s.onclick = ()=>{ C.active = i; renderSlots(); };
-    box.appendChild(s);
+    const inp = document.createElement("input");
+    inp.className = "slot"; inp.type = "number"; inp.inputMode = "numeric";
+    inp.min = "0"; inp.max = "999"; inp.placeholder = "?";
+    inp.value = C.slots[i];
+    inp.addEventListener("input", ()=>{
+      if(inp.value.length > 3) inp.value = inp.value.slice(0,3);
+      C.slots[i] = inp.value;
+    });
+    inp.addEventListener("keydown", e=>{
+      if(e.key === "Enter"){
+        e.preventDefault();
+        if(i < C.inputs.length-1 && C.inputs[i+1].value === "") C.inputs[i+1].focus();
+        else checkConvert(e);
+      }
+    });
+    box.appendChild(inp); C.inputs.push(inp);
     const u = document.createElement("span"); u.textContent = unit; u.style.color = "var(--text-dim)";
     box.appendChild(u);
   });
-}
-function buildPad(){
-  const pad = $("#cPad"); pad.innerHTML = "";
-  ["1","2","3","4","5","6","7","8","9","0","⌫","➜ Next","Clear"].forEach(k=>{
-    const b = document.createElement("button");
-    b.textContent = k;
-    if(k.length>1) b.style.fontSize = "14px";
-    b.onclick = ()=> padInput(k);
-    pad.appendChild(b);
-  });
-}
-function padInput(k){
-  if(!C.q) { newConvertQuestion(); return; }
-  if(k==="⌫"){ C.slots[C.active] = C.slots[C.active].slice(0,-1); }
-  else if(k==="Clear"){ C.slots = C.slots.map(()=> ""); C.active = 0; }
-  else if(k==="➜ Next"){ C.active = (C.active+1) % C.slots.length; }
-  else if(C.slots[C.active].length < 3){ C.slots[C.active] += k; }
-  sfx.tick();
-  renderSlots();
 }
 function checkConvert(evt){
   if(!C.q){ newConvertQuestion(); return; }
@@ -1309,11 +1391,9 @@ $("#cLevelSeg").addEventListener("click", e=>{
   newConvertQuestion();
 });
 document.addEventListener("keydown", e=>{
-  if(S.mode !== "convert") return;
-  if(/^[0-9]$/.test(e.key)) padInput(e.key);
-  else if(e.key === "Backspace"){ padInput("⌫"); e.preventDefault(); }
-  else if(e.key === "Enter") checkConvert();
-  else if(e.key === "Tab"){ C.active = (C.active+1) % C.slots.length; renderSlots(); e.preventDefault(); }
+  if(e.key !== "Enter") return;
+  if(S.mode === "convert" && !(document.activeElement && document.activeElement.classList.contains("slot"))) checkConvert(e);
+  else if(S.mode === "elapse" && !(document.activeElement && document.activeElement.tagName === "INPUT")) checkElapse(e);
 });
 
 /* =====================================================================
@@ -1353,7 +1433,7 @@ function init(){
   S.exact = S.minutes; S.anchor = S.minutes;
   $("#soundBtn").textContent = S.sound ? "🔊" : "🔇";
   $("#soundBtn").classList.toggle("off", !S.sound);
-  renderFree(); buildPad(); renderRewards(); render(); setMode("free");
+  renderFree(); renderRewards(); render(); setMode("free");
   /* browsers need a gesture before audio can play */
   const unlock = ()=>{ const c = ac(); if(c && c.state==="suspended") c.resume(); window.removeEventListener("pointerdown", unlock); };
   window.addEventListener("pointerdown", unlock);
