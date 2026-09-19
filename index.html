@@ -1449,17 +1449,26 @@ function elapseHint(){
   E.hintUsed = true;
   const q = E.q, fb = $("#eFeedback");
   fb.className = "feedback";
+  const twoStep = q.delta >= 60, exactHours = q.delta % 60 === 0;
   if(q.type === "end"){
-    const h = Math.floor(q.delta/60), m = q.delta%60;
-    const mid = norm(q.start + h*60);
-    fb.innerHTML = h>0
-      ? "💡 Jump the whole hours first: "+fmt12ap(q.start)+" ➜ "+fmt12ap(mid)+" is "+h+" hour"+(h===1?"":"s")+
-        ".<br>Then move the minute hand on "+m+" little marks."
-      : "💡 Move the minute hand forward "+m+" little marks (1 mark = 1 minute, 1 big mark = 5 minutes).";
+    fb.innerHTML = !twoStep
+      ? "💡 Only the minute hand has to travel. Each little mark is one minute and each big mark is five, " +
+        "so count in fives and let the hour hand drift along by itself."
+      : exactHours
+      ? "💡 Whole hours only — so step the <b>hour hand</b> on one big number for each hour and leave the " +
+        "minute hand exactly where it is.<br>Careful if you sweep past 12 — morning turns into afternoon!"
+      : "💡 Do it in two goes: move the <b>hour hand</b> on one big number for each whole hour first, " +
+        "<b>then</b> walk the minute hand round for the extra minutes.<br>" +
+        "Careful if you sweep past 12 — morning turns into afternoon!";
   }else{
-    const h = Math.floor(q.delta/60);
-    fb.innerHTML = "💡 Count the whole hours first: "+fmt12ap(q.start)+" to "+fmt12ap(norm(q.start+h*60))+
-      " is "+h+" hour"+(h===1?"":"s")+". The minute marks that are left over are the minutes.";
+    fb.innerHTML = !twoStep
+      ? "💡 Both clocks are in the same hour, so just count the minute marks from the first one to the second — " +
+        "in fives from one big mark to the next."
+      : exactHours
+      ? "💡 Look at the minute hands: they match, so nothing is left over. Just count the big numbers the " +
+        "hour hand has stepped through."
+      : "💡 Whole hours first: count how many times the hour hand steps from one clock to the other. " +
+        "Then count the minute marks that are left over.";
   }
   $("#eStreak").textContent = "This round: " + E.done + " / 10 · Streak: " + E.streak + " (hint used — no ⭐ for this one)";
 }
@@ -1500,21 +1509,35 @@ function newConvertQuestion(){
   const roll = Math.random();
   if(lv===1 && roll < 0.3){
     q = pick([
-      {text:"half an hour = ? minutes", ans:[30], slots:["minutes"], tip:"Half an hour is half of 60: 60 ÷ 2 = 30"},
-      {text:"a quarter of an hour = ? minutes", ans:[15], slots:["minutes"], tip:"A quarter of the dial = 3 big marks = 15 minutes"},
-      {text:"1 hour = ? minutes", ans:[60], slots:["minutes"], tip:"Once all the way round with the minute hand"},
-      {text:"2 hours = ? minutes", ans:[120], slots:["minutes"], tip:"60 + 60 = 120"},
-      {text:"three quarters of an hour = ? minutes", ans:[45], slots:["minutes"], tip:"15 + 15 + 15 = 45"}
+      {text:"half an hour = ? minutes", ans:[30], slots:["minutes"],
+       hint:"A whole hour is 60 minutes long. What do you get when you cut 60 in half?",
+       tip:"Half an hour is half of 60: 60 ÷ 2 = 30"},
+      {text:"a quarter of an hour = ? minutes", ans:[15], slots:["minutes"],
+       hint:"A quarter means one piece out of four equal pieces. Share the 60 minutes between 4.",
+       tip:"A quarter of the dial = 3 big marks = 15 minutes"},
+      {text:"1 hour = ? minutes", ans:[60], slots:["minutes"],
+       hint:"Send the minute hand all the way round the dial and count the little marks as it goes.",
+       tip:"Once all the way round with the minute hand"},
+      {text:"2 hours = ? minutes", ans:[120], slots:["minutes"],
+       hint:"You know how many minutes one hour is. Now you need that many twice.",
+       tip:"60 + 60 = 120"},
+      {text:"three quarters of an hour = ? minutes", ans:[45], slots:["minutes"],
+       hint:"Work out one quarter first, then take three of them.",
+       tip:"15 + 15 + 15 = 45"}
     ]);
   }else if(roll < 0.65){
     const h = lv===1 ? randInt(1,3) : (lv===2 ? randInt(1,5) : randInt(1,9));
     const m = lv===1 ? pick([0,30]) : (lv===2 ? randInt(0,11)*5 : randInt(0,59));
     q = { text: h+" hour"+(h===1?"":"s")+(m? " "+m+" min":"")+" = ? minutes", ans:[h*60+m], slots:["minutes"],
+          hint: "Count on in sixties — one lot of sixty for every hour." +
+                (m? " Then add on the minutes that are left over." : ""),
           tip: h+" × 60 = "+(h*60)+" minutes" + (m? ", then add the "+m+" minutes: "+(h*60+m) : "") };
   }else{
     const total = lv===1 ? pick([60,75,90,120,150,180])
                 : (lv===2 ? randInt(13,48)*5 : randInt(61,400));
     q = { text: total+" minutes = ? hours ? minutes", ans:[Math.floor(total/60), total%60], slots:["hours","minutes"],
+          hint: "Keep taking sixty away for as long as you can — each sixty you take off is one whole hour. " +
+                "What is left that is too small to take sixty from is the minutes.",
           tip: "How many 60s fit inside "+total+"? 60 × "+Math.floor(total/60)+" = "+(Math.floor(total/60)*60)+
                ", and "+(total%60)+" minutes are left over" };
   }
@@ -1584,7 +1607,8 @@ function convertHint(){
   C.hintUsed = true;
   const fb = $("#cFeedback");
   fb.className = "feedback";
-  fb.innerHTML = "💡 " + C.q.tip;
+  fb.innerHTML = "💡 " + (C.q.hint || "Remember: 1 hour = 60 minutes.");
+  $("#cStreak").textContent = "This round: " + C.done + " / 10 · Streak: " + C.streak + " (hint used — no ⭐ for this one)";
 }
 function updateCProgress(){
   if(C.done >= 10){

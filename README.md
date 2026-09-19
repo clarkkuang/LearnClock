@@ -15,7 +15,7 @@ A dragon-themed "learn to tell the time" web game for an 8-year-old.
 | ⏳ Time Passing Challenge | Two question types: (1) "It is 3:20 now. What time will it be in 1 hour 25 minutes?" — answered by **dragging the hands or typing the time** (with AM/PM); (2) "From 3:20 PM to 4:45 PM — how much time has passed?" — typed in, or nudged with − / ＋. Hours+minutes or minutes-only, three levels. Question times carry AM/PM, so crossing 12 o'clock counts |
 | 🔄 Hours ⇄ Minutes | "2 hours 30 min = ? minutes", "150 minutes = ? hours ? minutes", "a quarter of an hour = ? minutes", typed straight into the boxes. Three levels |
 | ⭐ Rewards | A star for every correct answer (no star if the hint was used); every 5 stars hatches a baby dragon: the egg springs in, rocks, cracks open and the dragon climbs out (all hand-drawn SVG, ~3s). Each of the 8 dragons has its own colour and joins the collection. Stars and dragons are saved in the browser |
-| 💡 Hints | Every question has a method hint: count the whole hours first, then the minutes. 1 hour = 60 minutes |
+| 💡 Hints | Every question has a hint, and it never gives the answer away — it only points at the method ("count on in sixties, one lot for every hour"). The worked-out sum is shown afterwards, once the answer is right. Using a hint costs the star for that question |
 | 🔊 Sound | Ticking hands, a happy tune for correct answers, a dragon roar when an egg hatches (mute button top right) |
 
 ## How to play
